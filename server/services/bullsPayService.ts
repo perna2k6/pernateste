@@ -94,8 +94,8 @@ export class BullsPayService {
 
 // Create service instance with environment variables
 export const bullsPayService = new BullsPayService({
-  publicKey: process.env.BULLS_PAY_PUBLIC_KEY || 'bp_client_YOUR_PUBLIC_KEY_HERE',
-  privateKey: process.env.BULLS_PAY_PRIVATE_KEY || 'bp_secret_YOUR_PRIVATE_KEY_HERE',
+  publicKey: process.env.BULLS_PAY_PUBLIC_KEY || 'bp_client_ITENJUsZo9jVwKT12pddnHeyqt6GRv',
+  privateKey: process.env.BULLS_PAY_PRIVATE_KEY || 'bp_secret_OwLSnhu9mub0olvLdYSU2XjQ7UIWkg97fdB5ENJEnQzam2GKLezvO87GdbwRZUtR',
   baseUrl: process.env.BULLS_PAY_BASE_URL || 'https://api-gateway.bullspay.com.br/api',
   webhookUrl: process.env.BULLS_PAY_WEBHOOK_URL || 'http://localhost:5000/api/webhook/bullspay'
 });
