@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(210, 40%, 98%);
+  --foreground: hsl(222.2, 84%, 4.9%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(222.2, 84%, 4.9%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(222.2, 84%, 4.9%);
+  --primary: hsl(22.7, 87.2%, 54.5%);
+  --primary-foreground: hsl(210, 40%, 98%);
+  --secondary: hsl(210, 40%, 96%);
+  --secondary-foreground: hsl(222.2, 47.4%, 11.2%);
+  --muted: hsl(210, 40%, 96%);
+  --muted-foreground: hsl(215.4, 16.3%, 46.9%);
+  --accent: hsl(210, 40%, 96%);
+  --accent-foreground: hsl(222.2, 47.4%, 11.2%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --border: hsl(214.3, 31.8%, 91.4%);
+  --input: hsl(214.3, 31.8%, 91.4%);
+  --ring: hsl(22.7, 87.2%, 54.5%);
+  --chart-1: hsl(22.7, 87.2%, 54.5%);
+  --chart-2: hsl(142.1, 76.2%, 36.3%);
+  --chart-3: hsl(42.0, 92.8%, 56.3%);
+  --chart-4: hsl(147.1, 78.5%, 41.9%);
+  --chart-5: hsl(341.5, 75.2%, 51.0%);
+  --sidebar: hsl(180, 6.7%, 97.1%);
+  --sidebar-foreground: hsl(222.2, 84%, 4.9%);
+  --sidebar-primary: hsl(22.7, 87.2%, 54.5%);
+  --sidebar-primary-foreground: hsl(210, 40%, 98%);
+  --sidebar-accent: hsl(210, 40%, 96%);
+  --sidebar-accent-foreground: hsl(222.2, 47.4%, 11.2%);
+  --sidebar-border: hsl(214.3, 31.8%, 91.4%);
+  --sidebar-ring: hsl(22.7, 87.2%, 54.5%);
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+  --radius: 0.5rem;
+  
+  /* Custom color palette from design */
+  --orange-50: hsl(33, 100%, 96%);
+  --orange-100: hsl(34, 100%, 92%);
+  --orange-200: hsl(32, 98%, 83%);
+  --orange-300: hsl(31, 97%, 72%);
+  --orange-400: hsl(27, 96%, 61%);
+  --orange-500: hsl(22.7, 87.2%, 54.5%);
+  --orange-600: hsl(20.5, 90.2%, 48.2%);
+  --orange-700: hsl(17.5, 88.2%, 40.6%);
+  --orange-800: hsl(15.0, 79.1%, 33.7%);
+  --orange-900: hsl(15.3, 74.6%, 27.8%);
+  
+  --pink-50: hsl(327, 73%, 97%);
+  --pink-100: hsl(326, 78%, 95%);
+  --pink-200: hsl(326, 85%, 90%);
+  --pink-300: hsl(327, 87%, 81%);
+  --pink-400: hsl(329, 86%, 70%);
+  --pink-500: hsl(330, 81%, 60%);
+  --pink-600: hsl(333, 71%, 51%);
+  
+  --green-500: hsl(142.1, 76.2%, 36.3%);
+  --green-600: hsl(142.1, 70.6%, 45.3%);
+  --green-100: hsl(142.1, 76.2%, 91%);
+  
+  --red-500: hsl(0, 84.2%, 60.2%);
+  --red-100: hsl(0, 84.2%, 95%);
+  
+  --gray-50: hsl(210, 40%, 98%);
+  --gray-100: hsl(210, 40%, 96%);
+  --gray-200: hsl(214.3, 31.8%, 91.4%);
+  --gray-300: hsl(213.0, 27.0%, 84.0%);
+  --gray-400: hsl(215.4, 16.3%, 57.0%);
+  --gray-500: hsl(215.4, 16.3%, 46.9%);
+  --gray-600: hsl(215.0, 19.0%, 34.5%);
+  --gray-700: hsl(215.0, 25.0%, 27.0%);
+  --gray-800: hsl(222.2, 47.4%, 11.2%);
+  --gray-900: hsl(222.2, 84%, 4.9%);
+  
+  /* Shadow system */
+  --shadow-sm: 0 1px 2px 0 hsl(0, 0%, 0%, 0.05);
+  --shadow: 0 1px 3px 0 hsl(0, 0%, 0%, 0.1), 0 1px 2px 0 hsl(0, 0%, 0%, 0.06);
+  --shadow-md: 0 4px 6px -1px hsl(0, 0%, 0%, 0.1), 0 2px 4px -1px hsl(0, 0%, 0%, 0.06);
+  --shadow-lg: 0 10px 15px -3px hsl(0, 0%, 0%, 0.1), 0 4px 6px -2px hsl(0, 0%, 0%, 0.05);
+  --shadow-xl: 0 20px 25px -5px hsl(0, 0%, 0%, 0.1), 0 10px 10px -5px hsl(0, 0%, 0%, 0.04);
+  --shadow-2xl: 0 25px 50px -12px hsl(0, 0%, 0%, 0.25);
+}
+
+.dark {
+  --background: hsl(0, 0%, 0%);
+  --foreground: hsl(200, 6.7%, 91.2%);
+  --card: hsl(228, 9.8%, 10%);
+  --card-foreground: hsl(0, 0%, 85.1%);
+  --popover: hsl(0, 0%, 0%);
+  --popover-foreground: hsl(200, 6.7%, 91.2%);
+  --primary: hsl(22.7, 87.2%, 54.5%);
+  --primary-foreground: hsl(210, 40%, 98%);
+  --secondary: hsl(195.0, 15.4%, 94.9%);
+  --secondary-foreground: hsl(222.2, 84%, 4.9%);
+  --muted: hsl(0, 0%, 9.4%);
+  --muted-foreground: hsl(210, 3.4%, 46.3%);
+  --accent: hsl(206, 70%, 7.8%);
+  --accent-foreground: hsl(22.7, 87.2%, 54.5%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --border: hsl(210, 5.3%, 14.9%);
+  --input: hsl(207.7, 27.6%, 18.4%);
+  --ring: hsl(22.7, 87.2%, 54.5%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    font-family: var(--font-sans);
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+}
+
+/* Custom animations and effects */
+.modal-backdrop {
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.qr-code-container {
+  background: radial-gradient(circle at center, hsl(var(--background)), hsl(var(--muted)));
+}
+
+.pulse-animation {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .7; }
+}
+
+.slide-up {
+  transform: translateY(100%);
+  transition: transform 0.3s ease-out;
+}
+
+.slide-up.active {
+  transform: translateY(0);
+}
+
+.fade-in {
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+}
+
+.fade-in.active {
+  opacity: 1;
+}
+
+.loading-spinner {
+  border: 2px solid hsl(var(--muted));
+  border-top: 2px solid hsl(var(--primary));
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.copy-feedback {
+  transform: scale(0);
+  transition: transform 0.2s ease-out;
+}
+
+.copy-feedback.show {
+  transform: scale(1);
+}
+
+/* Profile gradients */
+.profile-gradient {
+  background: linear-gradient(135deg, hsl(var(--orange-400)), hsl(var(--pink-400)), hsl(var(--orange-500)));
+}
+
+.banner-gradient {
+  background: linear-gradient(135deg, hsl(var(--orange-400)), hsl(var(--pink-400)), hsl(var(--orange-500)));
+}
+
+/* Button gradients */
+.gradient-primary {
+  background: linear-gradient(to right, hsl(var(--orange-400)), hsl(var(--orange-500)));
+}
+
+.gradient-primary:hover {
+  background: linear-gradient(to right, hsl(var(--orange-500)), hsl(var(--orange-600)));
+}
+
+.gradient-special {
+  background: linear-gradient(to right, hsl(var(--orange-400)), hsl(var(--pink-400)));
+}
+
+.gradient-special:hover {
+  background: linear-gradient(to right, hsl(var(--orange-500)), hsl(var(--pink-500)));
+}
+
+/* Content preview gradients */
+.content-gradient-1 {
+  background: linear-gradient(135deg, hsl(var(--orange-100)), hsl(var(--pink-100)));
+}
+
+.content-gradient-2 {
+  background: linear-gradient(135deg, hsl(var(--pink-100)), hsl(var(--orange-200)));
+}
+
+/* Status indicators */
+.status-pending {
+  background: linear-gradient(135deg, hsl(var(--orange-100)), hsl(var(--orange-200)));
+  color: hsl(var(--orange-700));
+}
+
+.status-success {
+  background: hsl(var(--green-100));
+  color: hsl(var(--green-600));
+}
+
+.status-error {
+  background: hsl(var(--red-100));
+  color: hsl(var(--red-500));
+}
