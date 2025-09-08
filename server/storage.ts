@@ -92,6 +92,7 @@ export class MemStorage implements IStorage {
       ...insertTransaction,
       id,
       userId: insertTransaction.userId || null,
+      paymentData: insertTransaction.paymentData || null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
