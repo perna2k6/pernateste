@@ -436,7 +436,7 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
                   <p className="text-sm text-muted-foreground">O status será atualizado automaticamente</p>
                   <div className="text-xs text-muted-foreground mt-2">
                     Transação: <span className="font-mono" data-testid="text-transaction-id">
-                      {currentTransaction.unicId.substring(0, 8)}...
+                      {currentTransaction.unicId?.substring(0, 8)}...
                     </span>
                   </div>
                 </div>
