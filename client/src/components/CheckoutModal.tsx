@@ -374,23 +374,20 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
             {currentStep === "pix" && currentTransaction && (
               <div>
                 <div className="text-center mb-6">
-                  <h4 className="font-medium text-foreground mb-2">Escaneie o QR Code</h4>
-                  <p className="text-sm text-muted-foreground">Use o app do seu banco ou PIX para pagar</p>
+                  <h4 className="font-medium text-foreground mb-2">PIX Copia e Cola</h4>
+                  <p className="text-sm text-muted-foreground">Copie o código e cole no seu app de pagamentos</p>
                 </div>
 
-                {/* QR Code */}
-                {currentTransaction.paymentData?.qrCodeBase64 && (
-                  <div className="qr-code-container p-6 rounded-xl border-2 border-dashed border-border mb-6">
-                    <div className="bg-white p-4 rounded-lg mx-auto max-w-64">
-                      <img 
-                        src={`data:image/png;base64,${currentTransaction.paymentData.qrCodeBase64}`}
-                        alt="QR Code PIX"
-                        className="w-full h-auto rounded"
-                        data-testid="img-qr-code"
-                      />
+                {/* Informação PIX */}
+                <div className="qr-code-container p-6 rounded-xl border-2 border-dashed border-border mb-6">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                      <CreditCard className="w-8 h-8 text-primary-foreground" />
                     </div>
+                    <h4 className="font-medium text-foreground mb-2">PIX Copia e Cola</h4>
+                    <p className="text-sm text-muted-foreground">Use o código abaixo no seu app de pagamentos</p>
                   </div>
-                )}
+                </div>
 
                 {/* PIX Copy Code */}
                 {currentTransaction.paymentData?.qrCodeText && (

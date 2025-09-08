@@ -16,11 +16,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const externalId = `subscription_${Date.now()}_${randomUUID().slice(0, 8)}`;
 
       // Create transaction with Bulls Pay
-      const bullsPayResponse = await bullsPayService.createTransaction(validatedData, externalId);
+      const bullsPayResponse = await bullsPayService.createTransaction(validatedData, externalId) as any;
 
       // Store transaction in our database
       const transaction = await storage.createTransaction({
-        unicId: bullsPayResponse.data.unic_id,
+        unicId: bullsPayResponse.data.payment_data.id,
         externalId: externalId,
         userId: null, // Could be linked to user if authenticated
         amount: validatedData.price,
@@ -35,9 +35,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           phone: validatedData.phone,
         },
         paymentData: {
-          qrCodeBase64: bullsPayResponse.data.qr_code_base64,
-          qrCodeText: bullsPayResponse.data.qr_code_text,
-          paymentUrl: bullsPayResponse.data.payment_url,
+          qrCodeBase64: null, // Bulls Pay não retorna base64, só o código PIX
+          qrCodeText: bullsPayResponse.data.pix_data.qrcode,
+          paymentUrl: null,
         },
       });
 
@@ -45,11 +45,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: true,
         data: {
           transactionId: transaction.id,
-          unicId: bullsPayResponse.data.unic_id,
-          status: bullsPayResponse.data.status,
-          qrCodeBase64: bullsPayResponse.data.qr_code_base64,
-          qrCodeText: bullsPayResponse.data.qr_code_text,
-          paymentUrl: bullsPayResponse.data.payment_url,
+          unicId: bullsPayResponse.data.payment_data.id,
+          status: 'pending',
+          qrCodeBase64: null, // Bulls Pay não fornece imagem QR, só o código
+          qrCodeText: bullsPayResponse.data.pix_data.qrcode,
+          paymentUrl: null,
         },
       });
     } catch (error) {
