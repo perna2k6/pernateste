@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { bullsPayService } from "./services/bullsPayService";
+import { sourcePayService } from "./services/sourcePayService";
 import { webhookService } from "./services/webhookService";
 import { checkoutFormSchema, type BullsPayWebhookPayload } from "@shared/schema";
 import { randomUUID } from "crypto";
@@ -15,12 +15,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate unique external ID
       const externalId = `subscription_${Date.now()}_${randomUUID().slice(0, 8)}`;
 
-      // Create transaction with Bulls Pay
-      const bullsPayResponse = await bullsPayService.createTransaction(validatedData, externalId) as any;
+      // Create transaction with SourcePay
+      const sourcePayResponse = await sourcePayService.createTransaction(validatedData, externalId);
 
       // Store transaction in our database
       const transaction = await storage.createTransaction({
-        unicId: bullsPayResponse.data.payment_data.id,
+        unicId: sourcePayResponse.data.id,
         externalId: externalId,
         userId: null, // Could be linked to user if authenticated
         amount: validatedData.price,
@@ -35,8 +35,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           phone: validatedData.phone,
         },
         paymentData: {
-          qrCodeBase64: null, // Bulls Pay não retorna base64, só o código PIX
-          qrCodeText: bullsPayResponse.data.pix_data.qrcode,
+          qrCodeBase64: sourcePayResponse.data.qrCodeImage || null,
+          qrCodeText: sourcePayResponse.data.qrCode || null,
           paymentUrl: null,
         },
       });
@@ -45,10 +45,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: true,
         data: {
           transactionId: transaction.id,
-          unicId: bullsPayResponse.data.payment_data.id,
-          status: 'pending',
-          qrCodeBase64: null, // Bulls Pay não fornece imagem QR, só o código
-          qrCodeText: bullsPayResponse.data.pix_data.qrcode,
+          unicId: sourcePayResponse.data.id,
+          status: sourcePayResponse.data.status,
+          qrCodeBase64: sourcePayResponse.data.qrCodeImage || null,
+          qrCodeText: sourcePayResponse.data.qrCode || null,
           paymentUrl: null,
         },
       });
@@ -66,8 +66,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { unicId } = req.params;
       
-      // Check status with Bulls Pay
-      const status = await bullsPayService.checkTransactionStatus(unicId);
+      // Check status with SourcePay
+      const status = await sourcePayService.checkTransactionStatus(unicId);
       
       // Update our local transaction
       await storage.updateTransactionStatus(unicId, status);
