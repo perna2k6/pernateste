@@ -46,18 +46,21 @@ export class SourcePayService {
       },
       items: [
         {
-          name: formData.title,
+          title: formData.title,
           quantity: 1,
           unitPrice: formData.price,
-          description: `Assinatura ${formData.plan}`
+          description: `Assinatura ${formData.plan}`,
+          tangible: false
         }
       ],
       customer: {
         name: formData.name,
         email: formData.email,
-        document: formData.document,
-        phone: formData.phone,
-        documentType: "cpf"
+        document: {
+          type: "cpf",
+          number: formData.document
+        },
+        phone: formData.phone
       },
       postbackUrl: this.config.webhookUrl,
       externalRef: externalRef,
@@ -80,9 +83,36 @@ export class SourcePayService {
     }
 
     const result = await response.json();
+    console.log("SourcePay Response:", JSON.stringify(result, null, 2));
     
     if (!result.success && result.success !== undefined) {
       throw new Error(result.message || 'Failed to create transaction');
+    }
+
+    // Buscar detalhes da transação para obter o código PIX
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Aguardar 1 segundo
+      const detailsResponse = await fetch(`${this.config.baseUrl}/v1/transactions/${result.id}`, {
+        headers: {
+          'Authorization': this.getAuthHeader(),
+          'Accept': 'application/json'
+        }
+      });
+      
+      if (detailsResponse.ok) {
+        const details = await detailsResponse.json();
+        console.log("Transaction details:", JSON.stringify(details, null, 2));
+        
+        // Atualizar result com os dados do PIX se disponíveis
+        if (details.qrCode || details.pixCopiaECola || details.brCode) {
+          result.qrCode = details.qrCode || details.pixCopiaECola || details.brCode;
+        }
+        if (details.qrCodeImage || details.qrCodeBase64) {
+          result.qrCodeImage = details.qrCodeImage || details.qrCodeBase64;
+        }
+      }
+    } catch (error) {
+      console.log("Error fetching transaction details:", error);
     }
 
     return {

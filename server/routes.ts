@@ -41,6 +41,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
       });
 
+      console.log("Final response data:", JSON.stringify(sourcePayResponse, null, 2));
+      
       res.json({
         success: true,
         data: {
@@ -134,8 +136,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { unicId } = req.params;
       
-      // Refund with Bulls Pay
-      const success = await bullsPayService.refundTransaction(unicId);
+      // Refund with SourcePay
+      const success = await sourcePayService.refundTransaction(unicId);
       
       if (success) {
         // Update local transaction status
