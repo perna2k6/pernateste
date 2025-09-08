@@ -30,7 +30,7 @@ export default function SubscriptionPlans({ onPlanSelect }: SubscriptionPlansPro
       {/* Primary Plan */}
       <button 
         onClick={() => handlePlanSelect("premium", 2990, "Acesso VIP - Mensal")}
-        className="w-full mb-3 h-14 px-6 gradient-primary hover:shadow-lg text-white rounded-lg font-medium transition-all hover:scale-[1.02] group"
+        className="w-full mb-3 h-14 px-6 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 hover:shadow-lg text-white rounded-lg font-medium transition-all hover:scale-[1.02] group"
         data-testid="button-plan-premium"
       >
         <div className="flex items-center justify-between">
@@ -51,7 +51,7 @@ export default function SubscriptionPlans({ onPlanSelect }: SubscriptionPlansPro
       {/* Secondary Plan */}
       <button 
         onClick={() => handlePlanSelect("basic", 1990, "Acesso Básico - Mensal")}
-        className="w-full mb-3 h-14 px-6 bg-card border border-orange-200 hover:bg-orange-50 text-foreground rounded-lg font-medium transition-all hover:scale-[1.02] hover:shadow-lg"
+        className="w-full mb-3 h-14 px-6 bg-white border-2 border-orange-200 hover:bg-orange-50 text-gray-800 rounded-lg font-medium transition-all hover:scale-[1.02] hover:shadow-lg"
         data-testid="button-plan-basic"
       >
         <div className="flex items-center justify-between">
@@ -78,7 +78,7 @@ export default function SubscriptionPlans({ onPlanSelect }: SubscriptionPlansPro
         </div>
         <button 
           onClick={() => handlePlanSelect("annual", 29900, "Plano Anual VIP")}
-          className="w-full h-12 px-4 gradient-special hover:shadow-lg text-white rounded-lg font-medium transition-all hover:scale-[1.02]"
+          className="w-full h-12 px-4 bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-white rounded-lg font-medium transition-all hover:scale-[1.02] hover:shadow-lg"
           data-testid="button-plan-annual"
         >
           <div className="flex items-center justify-between">
