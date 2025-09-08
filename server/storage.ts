@@ -91,6 +91,7 @@ export class MemStorage implements IStorage {
     const transaction: Transaction = {
       ...insertTransaction,
       id,
+      userId: insertTransaction.userId || null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -160,6 +161,7 @@ export class MemStorage implements IStorage {
     const event: WebhookEvent = {
       ...insertEvent,
       id,
+      processed: insertEvent.processed || false,
       createdAt: new Date(),
     };
     this.webhookEvents.set(id, event);
