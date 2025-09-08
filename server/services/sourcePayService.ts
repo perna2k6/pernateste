@@ -83,7 +83,6 @@ export class SourcePayService {
     }
 
     const result = await response.json();
-    console.log("SourcePay Response:", JSON.stringify(result, null, 2));
     
     if (!result.success && result.success !== undefined) {
       throw new Error(result.message || 'Failed to create transaction');
@@ -101,19 +100,15 @@ export class SourcePayService {
       
       if (detailsResponse.ok) {
         const details = await detailsResponse.json();
-        console.log("Transaction details:", JSON.stringify(details, null, 2));
         
         // Atualizar result com os dados do PIX se disponíveis
         if (details.pix && details.pix.qrcode) {
           result.qrCode = details.pix.qrcode;
           result.pixCode = details.pix.qrcode; // fallback
-          console.log("PIX code found and added:", details.pix.qrcode);
-        } else {
-          console.log("PIX code not found in details");
         }
       }
     } catch (error) {
-      console.log("Error fetching transaction details:", error);
+      // Silently handle error - transaction will work without PIX code
     }
 
     return {

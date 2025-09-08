@@ -41,7 +41,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
       });
 
-      console.log("Final response data:", JSON.stringify(sourcePayResponse, null, 2));
       
       res.json({
         success: true,
