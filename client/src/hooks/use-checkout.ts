@@ -72,8 +72,20 @@ export function useCheckout() {
 
   const createTransaction = async (data: CheckoutForm): Promise<Transaction | null> => {
     try {
-      await createTransactionMutation.mutateAsync(data);
-      return currentTransaction;
+      const response = await createTransactionMutation.mutateAsync(data);
+      if (response.success) {
+        return {
+          id: response.data.transactionId,
+          unicId: response.data.unicId,
+          status: response.data.status,
+          paymentData: {
+            qrCodeBase64: response.data.qrCodeBase64,
+            qrCodeText: response.data.qrCodeText,
+            paymentUrl: response.data.paymentUrl,
+          },
+        };
+      }
+      return null;
     } catch (error) {
       console.error("Error creating transaction:", error);
       return null;
