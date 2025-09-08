@@ -91,7 +91,7 @@ export class SourcePayService {
 
     // Buscar detalhes da transação para obter o código PIX
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Aguardar 1 segundo
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Aguardar 2 segundos
       const detailsResponse = await fetch(`${this.config.baseUrl}/v1/transactions/${result.id}`, {
         headers: {
           'Authorization': this.getAuthHeader(),
@@ -104,11 +104,12 @@ export class SourcePayService {
         console.log("Transaction details:", JSON.stringify(details, null, 2));
         
         // Atualizar result com os dados do PIX se disponíveis
-        if (details.qrCode || details.pixCopiaECola || details.brCode) {
-          result.qrCode = details.qrCode || details.pixCopiaECola || details.brCode;
-        }
-        if (details.qrCodeImage || details.qrCodeBase64) {
-          result.qrCodeImage = details.qrCodeImage || details.qrCodeBase64;
+        if (details.pix && details.pix.qrcode) {
+          result.qrCode = details.pix.qrcode;
+          result.pixCode = details.pix.qrcode; // fallback
+          console.log("PIX code found and added:", details.pix.qrcode);
+        } else {
+          console.log("PIX code not found in details");
         }
       }
     } catch (error) {

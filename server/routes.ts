@@ -36,7 +36,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
         paymentData: {
           qrCodeBase64: sourcePayResponse.data.qrCodeImage || null,
-          qrCodeText: sourcePayResponse.data.qrCode || null,
+          qrCodeText: sourcePayResponse.data.qrCode || sourcePayResponse.data.pixCode || (sourcePayResponse.data.pix && sourcePayResponse.data.pix.qrcode) || null,
           paymentUrl: null,
         },
       });
@@ -50,7 +50,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           unicId: sourcePayResponse.data.id,
           status: sourcePayResponse.data.status,
           qrCodeBase64: sourcePayResponse.data.qrCodeImage || null,
-          qrCodeText: sourcePayResponse.data.qrCode || null,
+          qrCodeText: sourcePayResponse.data.qrCode || sourcePayResponse.data.pixCode || (sourcePayResponse.data.pix && sourcePayResponse.data.pix.qrcode) || null,
           paymentUrl: null,
         },
       });
