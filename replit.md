@@ -39,10 +39,11 @@ Preferred communication style: Simple, everyday language.
 ## External Dependencies
 
 ### Payment Processing
-- **Bulls Pay API**: Brazilian payment processor for PIX transactions
-- **Integration**: RESTful API calls with public/private key authentication
+- **Bulls Pay API**: Brazilian payment processor for PIX transactions (ACTIVE)
+- **API Keys**: Configured with bp_client_lT5NnJJ3pjdyNwcTLzgsdmHxLyqRoR1v (public) and bp_secret_OwLSnhu9mub0olvLdYSU2XjQ7UIWkg97fdB5ENJEnQzam2GKLezvO87GdbwRZUtR (private)
+- **Integration**: RESTful API calls with X-Public-Key/X-Private-Key headers
 - **Webhook Processing**: Real-time payment status updates with event deduplication
-- **QR Code Generation**: Base64 encoded QR codes for PIX payments
+- **QR Code Generation**: PIX QR codes generated via Bulls Pay API integration
 
 ### Development Tools
 - **Replit Integration**: Custom Vite plugins for Replit development environment
