@@ -20,7 +20,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Store transaction in our database
       const transaction = await storage.createTransaction({
-        unicId: bullsPayResponse.data.unic_id,
+        unicId: bullsPayResponse.data.payment_data.id,
         externalId: externalId,
         userId: null, // Could be linked to user if authenticated
         amount: validatedData.price,
@@ -35,9 +35,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           phone: validatedData.phone,
         },
         paymentData: {
-          qrCodeBase64: bullsPayResponse.data.qr_code_base64 || null,
-          qrCodeText: bullsPayResponse.data.qr_code_text || null,
-          paymentUrl: bullsPayResponse.data.payment_url || null,
+          qrCodeBase64: null, // BullsPay doesn't provide base64 QR
+          qrCodeText: bullsPayResponse.data.pix_data.qrcode,
+          paymentUrl: null,
         },
       });
 
@@ -46,11 +46,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: true,
         data: {
           transactionId: transaction.id,
-          unicId: bullsPayResponse.data.unic_id,
-          status: bullsPayResponse.data.status,
-          qrCodeBase64: bullsPayResponse.data.qr_code_base64 || null,
-          qrCodeText: bullsPayResponse.data.qr_code_text || null,
-          paymentUrl: bullsPayResponse.data.payment_url || null,
+          unicId: bullsPayResponse.data.payment_data.id,
+          status: 'pending',
+          qrCodeBase64: null, // BullsPay doesn't provide base64 QR
+          qrCodeText: bullsPayResponse.data.pix_data.qrcode,
+          paymentUrl: null,
         },
       });
     } catch (error) {

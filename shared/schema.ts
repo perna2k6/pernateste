@@ -101,16 +101,27 @@ export type CheckoutForm = z.infer<typeof checkoutFormSchema>;
 // Bulls Pay response types
 export type BullsPayTransactionResponse = {
   success: boolean;
-  data: {
-    unic_id: string;
-    status: string;
-    total_value: number;
-    payment_url: string;
-    qr_code_base64: string;
-    qr_code_text: string;
-    created_at: string;
-  };
   message?: string;
+  data: {
+    payment_data: {
+      id: string;
+      amount: number;
+      external_id: string;
+      acquirer_transaction_id: string;
+      postback_url?: string;
+      buyer_infos: {
+        buyer_name: string;
+        buyer_email: string;
+        buyer_document: string;
+        buyer_phone: string;
+      };
+      total_to_receiver: number;
+      total_platform_tax: number;
+    };
+    pix_data: {
+      qrcode: string;
+    };
+  };
 };
 
 export type BullsPayWebhookPayload = {
