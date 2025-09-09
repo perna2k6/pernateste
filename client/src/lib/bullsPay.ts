@@ -84,7 +84,7 @@ export class BullsPayClient {
 
 // Client instance for frontend usage (NOTE: In production, API calls should go through your backend)
 export const bullsPayClient = new BullsPayClient({
-  publicKey: import.meta.env.VITE_BULLS_PAY_PUBLIC_KEY || 'bp_client_YOUR_PUBLIC_KEY_HERE',
-  privateKey: import.meta.env.VITE_BULLS_PAY_PRIVATE_KEY || 'bp_secret_YOUR_PRIVATE_KEY_HERE',
+  publicKey: import.meta.env.VITE_BULLS_PAY_PUBLIC_KEY || 'bp_client_lT5NnJJ3pjdyNwcTLzgsdmHxLyqRoR1v',
+  privateKey: import.meta.env.VITE_BULLS_PAY_PRIVATE_KEY || 'bp_secret_OwLSnhu9mub0olvLdYSU2XjQ7UIWkg97fdB5ENJEnQzam2GKLezvO87GdbwRZUtR',
   baseUrl: import.meta.env.VITE_BULLS_PAY_BASE_URL || 'https://api-gateway.bullspay.com.br/api',
 });
