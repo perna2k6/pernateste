@@ -14,6 +14,11 @@ export interface SourcePayTransactionData {
   paymentMethod: string;
   qrCode?: string;
   qrCodeImage?: string;
+  pixCode?: string;
+  pix?: {
+    qrcode?: string;
+    qrcodeImage?: string;
+  };
   expiresAt?: string;
   createdAt: string;
 }

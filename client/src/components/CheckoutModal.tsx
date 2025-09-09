@@ -109,6 +109,8 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
       setCurrentStep("payment");
       const transaction = await createTransaction(data);
       
+      console.log('Transaction created:', transaction);
+      
       if (transaction) {
         setCurrentStep("pix");
         toast({
@@ -117,6 +119,7 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
         });
       }
     } catch (error) {
+      console.error('Checkout error:', error);
       setCurrentStep("error");
       toast({
         title: "Erro",
@@ -444,7 +447,7 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
                 </div>
 
                 {/* QR Code Image */}
-                {currentTransaction.paymentData?.qrCodeBase64 && (
+                {currentTransaction.paymentData?.qrCodeBase64 ? (
                   <div className="mb-8">
                     <div className="bg-white rounded-2xl p-6 border-2 border-gray-200 shadow-lg">
                       <div className="text-center mb-4">
@@ -459,12 +462,31 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
                             alt="QR Code PIX"
                             className="w-48 h-48 mx-auto"
                             data-testid="qr-code-image"
+                            onError={(e) => {
+                              console.log('QR Code image failed to load');
+                              e.currentTarget.style.display = 'none';
+                            }}
                           />
                         </div>
                       </div>
                       
                       <div className="text-center mt-4">
                         <p className="text-xs text-muted-foreground">Abra o app do seu banco e escaneie este código</p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mb-8">
+                    <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-2xl p-6 border-2 border-yellow-200">
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-yellow-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                          <CreditCard className="w-8 h-8 text-yellow-800" />
+                        </div>
+                        <h5 className="font-semibold text-lg text-foreground mb-2">QR Code sendo gerado</h5>
+                        <p className="text-sm text-muted-foreground mb-4">O QR Code estará disponível em breve</p>
+                        <div className="text-xs text-yellow-700 bg-yellow-100 rounded-lg p-2">
+                          Use o código PIX abaixo enquanto o QR Code não aparece
+                        </div>
                       </div>
                     </div>
                   </div>

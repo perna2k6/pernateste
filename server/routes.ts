@@ -17,6 +17,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Create transaction with SourcePay
       const sourcePayResponse = await sourcePayService.createTransaction(validatedData, externalId);
+      console.log('SourcePay Response:', JSON.stringify(sourcePayResponse, null, 2));
 
       // Store transaction in our database
       const transaction = await storage.createTransaction({
