@@ -107,17 +107,20 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
     return () => clearInterval(interval);
   }, [currentStep, currentTransaction, checkPaymentStatus, toast]);
 
-  // Generate QR Code when PIX code is available
+  // Generate QR Code when PIX step is reached
   useEffect(() => {
     const generateQRCode = async () => {
       const pixCode = currentTransaction?.paymentData?.qrCodeText;
-      console.log('Generating QR Code for PIX:', pixCode ? 'Code exists' : 'No code');
+      console.log('Current step:', currentStep);
+      console.log('Transaction exists:', !!currentTransaction);
+      console.log('PIX code exists:', !!pixCode);
+      console.log('PIX code:', pixCode);
       
       if (pixCode) {
         try {
           const dataUrl = await QRCode.toDataURL(pixCode, {
             width: 300,
-            margin: 1,
+            margin: 2,
             color: {
               dark: '#000000',
               light: '#FFFFFF'
@@ -131,33 +134,39 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
           setQrCodeDataUrl(null);
         }
       } else {
+        console.log('No PIX code available for QR generation');
         setQrCodeDataUrl(null);
       }
     };
     
-    // Add a small delay to ensure the transaction data is fully loaded
-    if (currentStep === 'pix' && currentTransaction) {
-      const timer = setTimeout(generateQRCode, 100);
-      return () => clearTimeout(timer);
+    if (currentStep === 'pix' && currentTransaction?.paymentData?.qrCodeText) {
+      generateQRCode();
     }
-  }, [currentStep, currentTransaction]);
+  }, [currentStep, currentTransaction?.paymentData?.qrCodeText]);
 
   const onSubmit = async (data: CheckoutForm) => {
     try {
+      console.log('Starting checkout process...');
       setCurrentStep("payment");
-      const transaction = await createTransaction(data);
       
-      if (transaction) {
-        // Wait a bit for transaction data to be fully set
-        setTimeout(() => {
-          setCurrentStep("pix");
-          toast({
-            title: "PIX Gerado",
-            description: "Escaneie o QR Code ou copie o código para pagar",
-          });
-        }, 100);
+      const transaction = await createTransaction(data);
+      console.log('Transaction result:', transaction);
+      
+      if (transaction && transaction.paymentData) {
+        console.log('Transaction successful, moving to PIX step');
+        setCurrentStep("pix");
+        toast({
+          title: "PIX Gerado",
+          description: "Escaneie o QR Code ou copie o código para pagar",
+        });
       } else {
+        console.log('Transaction failed, no payment data');
         setCurrentStep("error");
+        toast({
+          title: "Erro",
+          description: "Falha ao gerar dados de pagamento",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error('Checkout error:', error);
