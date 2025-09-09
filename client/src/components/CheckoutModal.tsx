@@ -201,17 +201,27 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
       <div className="fixed inset-x-0 bottom-0 sm:inset-4 sm:max-w-lg sm:mx-auto sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
         <Card className="rounded-t-xl sm:rounded-xl shadow-2xl max-h-[90vh] flex flex-col slide-up active">
           {/* Header */}
-          <div className="sticky top-0 bg-card border-b border-border px-6 py-4 flex items-center justify-between rounded-t-xl sm:rounded-t-xl">
-            <h3 className="text-lg font-semibold text-foreground">
-              {currentStep === "form" && "Finalizar Pagamento"}
-              {currentStep === "payment" && "Método de Pagamento"}
-              {currentStep === "pix" && "Pagamento PIX"}
-              {currentStep === "success" && "Pagamento Aprovado!"}
-              {currentStep === "error" && "Erro no Pagamento"}
-            </h3>
+          <div className="sticky top-0 bg-gradient-to-r from-white to-gray-50 border-b border-border px-6 py-5 flex items-center justify-between rounded-t-xl sm:rounded-t-xl shadow-sm">
+            <div className="flex items-center gap-3">
+              {currentStep === "form" && <CreditCard className="w-6 h-6 text-orange-500" />}
+              {currentStep === "payment" && <div className="w-6 h-6 bg-orange-500 rounded-full animate-pulse" />}
+              {currentStep === "pix" && <CheckCircle className="w-6 h-6 text-green-500" />}
+              {currentStep === "success" && <CheckCircle className="w-6 h-6 text-green-500" />}
+              {currentStep === "error" && <AlertCircle className="w-6 h-6 text-red-500" />}
+              
+              <h3 className="text-xl font-bold text-foreground">
+                {currentStep === "form" && "Finalizar Pagamento"}
+                {currentStep === "payment" && "Processando..."}
+                {currentStep === "pix" && "PIX Gerado"}
+                {currentStep === "success" && "Pagamento Aprovado!"}
+                {currentStep === "error" && "Erro no Pagamento"}
+              </h3>
+            </div>
+            
             <Button 
               variant="ghost" 
               size="icon"
+              className="rounded-full hover:bg-gray-100"
               onClick={handleClose}
               data-testid="button-close-modal"
             >
@@ -254,10 +264,13 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
             {currentStep === "form" && (
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <div className="mb-6">
-                    <h4 className="font-medium text-foreground mb-4">Suas Informações</h4>
+                  <div className="mb-8">
+                    <div className="text-center mb-6">
+                      <h4 className="font-semibold text-xl text-foreground mb-2">Dados para Pagamento</h4>
+                      <p className="text-sm text-muted-foreground">Preencha seus dados para finalizar a compra</p>
+                    </div>
                     
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                       <FormField
                         control={form.control}
                         name="name"
@@ -267,6 +280,7 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
                             <FormControl>
                               <Input 
                                 placeholder="Digite seu nome completo"
+                                className="h-12 rounded-xl border-2 focus:border-orange-400 transition-colors"
                                 data-testid="input-name"
                                 {...field}
                               />
@@ -286,6 +300,7 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
                               <Input 
                                 type="email"
                                 placeholder="Digite seu e-mail"
+                                className="h-12 rounded-xl border-2 focus:border-orange-400 transition-colors"
                                 data-testid="input-email"
                                 {...field}
                               />
@@ -305,6 +320,7 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
                               <Input 
                                 placeholder="000.000.000-00"
                                 maxLength={14}
+                                className="h-12 rounded-xl border-2 focus:border-orange-400 transition-colors"
                                 data-testid="input-document"
                                 value={formatCPF(field.value)}
                                 onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ""))}
@@ -325,6 +341,7 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
                               <Input 
                                 placeholder="(11) 99999-9999"
                                 maxLength={15}
+                                className="h-12 rounded-xl border-2 focus:border-orange-400 transition-colors"
                                 data-testid="input-phone"
                                 value={formatPhone(field.value)}
                                 onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ""))}
@@ -367,111 +384,139 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
 
             {/* Step 2: Payment Method Selection */}
             {currentStep === "payment" && (
-              <div>
-                <div className="mb-6">
-                  <h4 className="font-medium text-foreground mb-4">Método de Pagamento</h4>
-                  
-                  <div className="border border-border rounded-lg p-4 bg-gradient-to-r from-green-50 to-emerald-50">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                        <Check className="w-4 h-4 text-white" />
-                      </div>
-                      <div>
-                        <h5 className="font-medium text-foreground">PIX</h5>
-                        <p className="text-sm text-muted-foreground">Pagamento instantâneo e seguro</p>
-                      </div>
+              <div className="py-8">
+                <div className="text-center mb-8">
+                  <h4 className="font-semibold text-2xl text-foreground mb-2">Método de Pagamento</h4>
+                  <p className="text-muted-foreground">Processando seu pagamento PIX</p>
+                </div>
+                
+                <div className="bg-gradient-to-br from-green-50 to-emerald-100 border-2 border-green-200 rounded-2xl p-6 mb-8">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center shadow-lg">
+                      <Check className="w-6 h-6 text-white" />
                     </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-green-700 font-medium">✓ Aprovação imediata</span>
-                      <span className="text-green-700 font-medium">✓ Sem taxas extras</span>
+                    <div>
+                      <h5 className="font-semibold text-lg text-foreground">PIX Selecionado</h5>
+                      <p className="text-green-700 font-medium">Pagamento instantâneo e seguro</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="flex items-center gap-2 text-green-700">
+                      <CheckCircle className="w-4 h-4" />
+                      <span className="font-medium">Aprovação imediata</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-green-700">
+                      <CheckCircle className="w-4 h-4" />
+                      <span className="font-medium">Sem taxas extras</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-green-700">
+                      <CheckCircle className="w-4 h-4" />
+                      <span className="font-medium">100% seguro</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-green-700">
+                      <CheckCircle className="w-4 h-4" />
+                      <span className="font-medium">Disponível 24h</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="text-center">
-                  <div className="loading-spinner mx-auto mb-4" />
-                  <h4 className="font-medium text-foreground mb-2">Gerando pagamento PIX...</h4>
-                  <p className="text-sm text-muted-foreground">Aguarde um momento</p>
+                <div className="text-center bg-gradient-to-r from-orange-50 to-pink-50 rounded-2xl p-8">
+                  <div className="w-16 h-16 bg-gradient-to-r from-orange-400 to-pink-400 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                    <div className="w-8 h-8 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                  <h4 className="font-semibold text-xl text-foreground mb-2">Gerando seu PIX...</h4>
+                  <p className="text-muted-foreground">Aguarde um momento enquanto processamos</p>
                 </div>
               </div>
             )}
 
             {/* Step 3: PIX Payment Display */}
             {currentStep === "pix" && currentTransaction && (
-              <div>
-                <div className="text-center mb-6">
-                  <h4 className="font-medium text-foreground mb-2">PIX Copia e Cola</h4>
-                  <p className="text-sm text-muted-foreground">Copie o código e cole no seu app de pagamentos</p>
-                </div>
-
-                {/* Informação PIX */}
-                <div className="qr-code-container p-6 rounded-xl border-2 border-dashed border-border mb-6">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                      <CreditCard className="w-8 h-8 text-primary-foreground" />
+              <div className="py-4">
+                <div className="text-center mb-8">
+                  <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center">
+                      <CreditCard className="w-6 h-6 text-green-500" />
                     </div>
-                    <h4 className="font-medium text-foreground mb-2">PIX Copia e Cola</h4>
-                    <p className="text-sm text-muted-foreground">Use o código abaixo no seu app de pagamentos</p>
                   </div>
+                  <h4 className="font-bold text-2xl text-foreground mb-2">PIX Gerado com Sucesso!</h4>
+                  <p className="text-muted-foreground">Escaneie o QR Code ou copie o código PIX para pagar</p>
                 </div>
 
                 {/* PIX Copy Code */}
                 {currentTransaction.paymentData?.qrCodeText && (
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Ou copie o código PIX:
-                    </label>
-                    <div className="flex gap-2">
-                      <Input 
-                        value={currentTransaction.paymentData.qrCodeText}
-                        readOnly
-                        className="flex-1 bg-muted text-sm"
-                        data-testid="input-pix-code"
-                      />
-                      <Button 
-                        onClick={copyPixCode}
-                        variant="default"
-                        className="px-4"
-                        data-testid="button-copy-pix"
-                      >
-                        <Copy className="w-4 h-4 mr-2" />
-                        Copiar
-                      </Button>
-                    </div>
-                    {copyFeedback && (
-                      <div className="mt-2 text-center">
-                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                          ✓ Código copiado!
-                        </span>
+                  <div className="mb-8">
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-200">
+                      <div className="text-center mb-4">
+                        <h5 className="font-semibold text-lg text-foreground mb-1">Código PIX</h5>
+                        <p className="text-sm text-muted-foreground">Copie e cole no seu app de pagamentos</p>
                       </div>
-                    )}
+                      
+                      <div className="space-y-4">
+                        <div className="bg-white rounded-xl p-4 border border-gray-200">
+                          <div className="text-xs text-muted-foreground mb-2 font-medium">Código PIX:</div>
+                          <div className="bg-gray-50 rounded-lg p-3 font-mono text-sm break-all text-gray-700">
+                            {currentTransaction.paymentData.qrCodeText}
+                          </div>
+                        </div>
+                        
+                        <Button 
+                          onClick={copyPixCode}
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 rounded-xl shadow-lg transition-all duration-200"
+                          data-testid="button-copy-pix"
+                        >
+                          <Copy className="w-5 h-5 mr-2" />
+                          Copiar Código PIX
+                        </Button>
+                        
+                        {copyFeedback && (
+                          <div className="text-center animate-in slide-in-from-bottom-4 duration-300">
+                            <div className="bg-green-500 text-white text-sm px-4 py-2 rounded-full inline-flex items-center gap-2">
+                              <CheckCircle className="w-4 h-4" />
+                              Código copiado com sucesso!
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 )}
 
                 {/* Payment Status */}
-                <div className="text-center p-4 border border-border rounded-lg status-pending">
-                  <div className="pulse-animation mb-2">
-                    <div className="w-8 h-8 bg-orange-500 rounded-full mx-auto flex items-center justify-center">
-                      <div className="w-3 h-3 bg-white rounded-full"></div>
+                <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-6 border-2 border-orange-200 mb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <div className="w-12 h-12 bg-orange-500 rounded-2xl flex items-center justify-center animate-pulse">
+                        <div className="w-6 h-6 bg-white rounded-full"></div>
+                      </div>
+                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center">
+                        <Clock className="w-3 h-3 text-yellow-800" />
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-lg text-foreground mb-1">Aguardando pagamento...</h4>
+                      <p className="text-sm text-muted-foreground mb-2">Detectaremos automaticamente quando o pagamento for realizado</p>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+                          <span>ID: <span className="font-mono" data-testid="text-transaction-id">
+                            {String(currentTransaction.unicId)?.substring(0, 8)}...
+                          </span></span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <h4 className="font-medium text-foreground mb-1">Aguardando pagamento...</h4>
-                  <p className="text-sm text-muted-foreground">O status será atualizado automaticamente</p>
-                  <div className="text-xs text-muted-foreground mt-2">
-                    Transação: <span className="font-mono" data-testid="text-transaction-id">
-                      {String(currentTransaction.unicId)?.substring(0, 8)}...
-                    </span>
+                  
+                  {/* Payment Timer */}
+                  <div className="mt-4 pt-4 border-t border-orange-200">
+                    <div className="flex items-center justify-center gap-2 text-sm">
+                      <Clock className="w-4 h-4 text-orange-600" />
+                      <span className="text-muted-foreground">Expira em:</span>
+                      <span className="font-mono font-bold text-orange-600" data-testid="text-payment-timer">
+                        {formatTime(paymentTimer)}
+                      </span>
+                    </div>
                   </div>
-                </div>
-
-                {/* Payment Timer */}
-                <div className="text-center mt-4">
-                  <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    PIX expira em: <span className="font-medium" data-testid="text-payment-timer">
-                      {formatTime(paymentTimer)}
-                    </span>
-                  </p>
                 </div>
               </div>
             )}
