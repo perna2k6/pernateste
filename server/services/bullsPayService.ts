@@ -43,6 +43,7 @@ export class BullsPayService {
     }
 
     const result = await response.json();
+    console.log("Raw BullsPay API response:", JSON.stringify(result, null, 2));
     
     if (!result.success) {
       throw new Error(result.message || 'Failed to create transaction');
