@@ -23,7 +23,7 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
   const [currentStep, setCurrentStep] = useState<CheckoutStep>("form");
   const [paymentTimer, setPaymentTimer] = useState(900); // 15 minutes
   const [copyFeedback, setCopyFeedback] = useState(false);
-  const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string | null>(null);
+  const [qrCodeRef, setQrCodeRef] = useState<HTMLCanvasElement | null>(null);
   
   const { toast } = useToast();
   const {
@@ -61,7 +61,7 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
     if (isOpen) {
       setCurrentStep("form");
       setPaymentTimer(900);
-      setQrCodeDataUrl(null);
+      setQrCodeRef(null);
       clearError();
     }
   }, [isOpen, clearError]);
@@ -107,43 +107,34 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
     return () => clearInterval(interval);
   }, [currentStep, currentTransaction, checkPaymentStatus, toast]);
 
-  // Generate QR Code when PIX step is reached
+  // Generate QR Code canvas when PIX step is reached
   useEffect(() => {
     const generateQRCode = async () => {
       const pixCode = currentTransaction?.paymentData?.qrCodeText;
-      console.log('Current step:', currentStep);
-      console.log('Transaction exists:', !!currentTransaction);
-      console.log('PIX code exists:', !!pixCode);
-      console.log('PIX code:', pixCode);
+      console.log('Generating QR Code canvas for:', pixCode ? 'PIX code exists' : 'No PIX code');
       
-      if (pixCode) {
+      if (pixCode && qrCodeRef) {
         try {
-          const dataUrl = await QRCode.toDataURL(pixCode, {
+          await QRCode.toCanvas(qrCodeRef, pixCode, {
             width: 256,
-            margin: 1,
+            margin: 2,
             color: {
               dark: '#000000',
               light: '#FFFFFF'  
             },
-            errorCorrectionLevel: 'M',
-            type: 'image/png'
+            errorCorrectionLevel: 'M'
           });
-          console.log('QR Code generated successfully');
-          setQrCodeDataUrl(dataUrl);
+          console.log('QR Code canvas generated successfully');
         } catch (error) {
-          console.error('Error generating QR code:', error);
-          setQrCodeDataUrl(null);
+          console.error('Error generating QR code canvas:', error);
         }
-      } else {
-        console.log('No PIX code available for QR generation');
-        setQrCodeDataUrl(null);
       }
     };
     
-    if (currentStep === 'pix' && currentTransaction?.paymentData?.qrCodeText) {
+    if (currentStep === 'pix' && currentTransaction?.paymentData?.qrCodeText && qrCodeRef) {
       generateQRCode();
     }
-  }, [currentStep, currentTransaction?.paymentData?.qrCodeText]);
+  }, [currentStep, currentTransaction?.paymentData?.qrCodeText, qrCodeRef]);
 
   const onSubmit = async (data: CheckoutForm) => {
     try {
@@ -237,7 +228,7 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
     form.reset();
     setCurrentStep("form");
     setPaymentTimer(900);
-    setQrCodeDataUrl(null);
+    setQrCodeRef(null);
     clearError();
   };
 
@@ -519,44 +510,32 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
                     </div>
                     
                     <div className="flex justify-center mb-4">
-                      {qrCodeDataUrl ? (
-                        <div className="bg-white p-4 rounded-2xl border-2 border-gray-100 shadow-inner">
-                          <img 
-                            src={qrCodeDataUrl}
-                            alt="QR Code PIX"
-                            className="w-64 h-64 mx-auto block"
-                            data-testid="qr-code-image"
-                            onLoad={() => console.log('QR Code image loaded')}
-                            onError={(e) => {
-                              console.log('QR Code image failed to load');
-                              console.error('Image error:', e);
-                            }}
-                            style={{ 
-                              display: 'block',
-                              maxWidth: '256px',
-                              maxHeight: '256px',
-                              width: 'auto',
-                              height: 'auto'
-                            }}
-                          />
-                        </div>
-                      ) : currentTransaction?.paymentData?.qrCodeText ? (
-                        <div className="w-64 h-64 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-200 flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="w-12 h-12 bg-blue-400 rounded-full flex items-center justify-center mx-auto mb-3 animate-spin">
-                              <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full"></div>
+                      <div className="bg-white p-4 rounded-2xl border-2 border-gray-100 shadow-inner">
+                        <canvas 
+                          ref={(canvas) => {
+                            if (canvas && !qrCodeRef) {
+                              setQrCodeRef(canvas);
+                            }
+                          }}
+                          className="mx-auto block"
+                          style={{ 
+                            maxWidth: '256px',
+                            maxHeight: '256px'
+                          }}
+                          data-testid="qr-code-canvas"
+                        />
+                        
+                        {!currentTransaction?.paymentData?.qrCodeText && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="text-center">
+                              <div className="w-12 h-12 bg-blue-400 rounded-full flex items-center justify-center mx-auto mb-3 animate-spin">
+                                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full"></div>
+                              </div>
+                              <p className="text-sm text-blue-600 font-medium">Gerando QR Code...</p>
                             </div>
-                            <p className="text-sm text-blue-600 font-medium">Gerando QR Code...</p>
                           </div>
-                        </div>
-                      ) : (
-                        <div className="w-64 h-64 bg-gray-50 rounded-2xl border-2 border-gray-200 flex items-center justify-center">
-                          <div className="text-center text-gray-500">
-                            <CreditCard className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                            <p className="text-sm">Aguardando dados PIX...</p>
-                          </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
                     
                     <div className="text-center">
