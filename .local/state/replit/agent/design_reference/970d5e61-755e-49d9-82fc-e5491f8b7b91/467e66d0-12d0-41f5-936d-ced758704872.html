@@ -1,0 +1,1081 @@
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Checkout - Mel Maia</title>
+    <link rel="icon" type="image/png" href="images/219-images-favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    border: "var(--border)",
+                    ring: "var(--ring)",
+                }
+            }
+        }
+    };
+    </script>
+    
+    <style>
+        :root {
+            --background: hsl(210 40% 98%);
+            --foreground: hsl(222.2 84% 4.9%);
+            --card: hsl(0 0% 100%);
+            --card-foreground: hsl(222.2 84% 4.9%);
+            --primary: hsl(22.7 87.2% 54.5%);
+            --primary-foreground: hsl(210 40% 98%);
+            --secondary: hsl(210 40% 96%);
+            --secondary-foreground: hsl(222.2 47.4% 11.2%);
+            --muted: hsl(210 40% 96%);
+            --muted-foreground: hsl(215.4 16.3% 46.9%);
+            --accent: hsl(210 40% 96%);
+            --accent-foreground: hsl(222.2 47.4% 11.2%);
+            --border: hsl(214.3 31.8% 91.4%);
+            --ring: hsl(22.7 87.2% 54.5%);
+            --radius: 0.5rem;
+            
+            --orange-50: hsl(33 100% 96%);
+            --orange-100: hsl(34 100% 92%);
+            --orange-500: hsl(22.7 87.2% 54.5%);
+            --orange-600: hsl(20.5 90.2% 48.2%);
+            --green-500: hsl(142.1 76.2% 36.3%);
+            --red-500: hsl(0 84.2% 60.2%);
+        }
+
+        * {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        .modal-backdrop {
+            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .qr-code-container {
+            background: radial-gradient(circle at center, hsl(var(--background)), hsl(var(--muted)));
+        }
+
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .7; }
+        }
+
+        .slide-up {
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+        }
+
+        .slide-up.active {
+            transform: translateY(0);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transition: opacity 0.3s ease-in;
+        }
+
+        .fade-in.active {
+            opacity: 1;
+        }
+
+        .loading-spinner {
+            border: 2px solid hsl(var(--muted));
+            border-top: 2px solid hsl(var(--primary));
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .copy-feedback {
+            transform: scale(0);
+            transition: transform 0.2s ease-out;
+        }
+
+        .copy-feedback.show {
+            transform: scale(1);
+        }
+    </style>
+</head>
+
+<body class="bg-background text-foreground">
+    <!-- Header -->
+    <header class="sticky top-0 z-30 bg-card border-b border-border shadow-sm">
+        <div class="max-w-3xl mx-auto px-4 h-16 flex items-center justify-center">
+            <div class="flex items-center">
+                <!-- Modern logo placeholder - would use actual Mel Maia logo -->
+                <div class="h-8 w-8 bg-primary rounded-full flex items-center justify-center">
+                    <span class="text-primary-foreground font-bold text-sm">MM</span>
+                </div>
+                <span class="ml-2 font-semibold text-lg">Mel Maia</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 py-8">
+        <!-- @COMPONENT: ProfileSection -->
+        <div class="relative mb-16">
+            <!-- Banner with gradient overlay -->
+            <div class="relative w-full h-48 rounded-xl overflow-hidden">
+                <!-- Modern artistic gradient background instead of image for privacy -->
+                <div class="w-full h-full bg-gradient-to-br from-orange-400 via-pink-400 to-purple-500"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                
+                <div class="absolute top-6 left-6 right-6">
+                    <h2 class="text-2xl font-bold text-white drop-shadow-lg mb-2">Conteúdo Exclusivo</h2>
+                    <div class="flex items-center gap-4 text-sm text-white/90">
+                        <div class="flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            <span>4.9</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>12.5k seguidores</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Image -->
+            <div class="absolute -bottom-10 left-6 w-20 h-20 rounded-full border-4 border-card overflow-hidden shadow-lg bg-muted">
+                <div class="w-full h-full bg-gradient-to-br from-orange-300 to-pink-300 flex items-center justify-center">
+                    <span class="text-2xl font-bold text-white">MM</span>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: ProfileSection -->
+
+        <!-- @COMPONENT: ProfileCard -->
+        <div class="bg-card rounded-lg shadow-sm border border-border p-6 mb-6 mt-8">
+            <div class="pt-2">
+                <h1 class="text-xl font-semibold text-foreground mb-1">Mel Maia</h1>
+                <p class="text-sm text-muted-foreground mb-3">@melmaia</p>
+                <p class="text-sm text-muted-foreground leading-relaxed">
+                    Conteúdo exclusivo e especial. Acesso VIP aos meus melhores momentos e bastidores únicos. 
+                    ✨ Seja parte do meu mundo privado!
+                </p>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: ProfileCard -->
+
+        <!-- @COMPONENT: SubscriptionPlans -->
+        <div class="bg-card rounded-lg shadow-sm border border-border p-6 mb-6">
+            <h3 class="text-lg font-medium text-foreground mb-4">Planos de Assinatura</h3>
+            
+            <!-- Primary Plan -->
+            <button 
+                data-plan="premium"
+                data-price="2990"
+                data-title="Acesso VIP - Mensal"
+                onclick="openCheckout(this)"
+                class="w-full mb-3 h-14 px-6 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-lg font-medium transition-all hover:scale-[1.02] hover:shadow-lg group"
+            >
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732L14.146 12.8l-1.179 4.456a1 1 0 01-1.934 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732L9.854 7.2l1.179-4.456A1 1 0 0112 2z" clip-rule="evenodd"/>
+                        </svg>
+                        <div class="text-left">
+                            <div class="font-medium">Acesso VIP - Mensal</div>
+                            <div class="text-xs opacity-90">Conteúdo exclusivo completo</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-bold">R$ 29,90</div>
+                        <div class="text-xs opacity-75">por mês</div>
+                    </div>
+                </div>
+            </button>
+
+            <!-- Secondary Plan -->
+            <button 
+                data-plan="basic"
+                data-price="1990"
+                data-title="Acesso Básico - Mensal"
+                onclick="openCheckout(this)"
+                class="w-full mb-3 h-14 px-6 bg-card border border-orange-200 hover:bg-orange-50 text-foreground rounded-lg font-medium transition-all hover:scale-[1.02] hover:shadow-lg"
+            >
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/>
+                        </svg>
+                        <div class="text-left">
+                            <div class="font-medium">Acesso Básico - Mensal</div>
+                            <div class="text-xs text-muted-foreground">Conteúdo selecionado</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-bold">R$ 19,90</div>
+                        <div class="text-xs text-muted-foreground">por mês</div>
+                    </div>
+                </div>
+            </button>
+
+            <!-- Special Offer -->
+            <div class="bg-gradient-to-r from-orange-50 to-pink-50 border border-orange-200 rounded-lg p-4 mt-4">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="bg-orange-100 text-orange-800 text-xs font-medium px-2 py-1 rounded-full">
+                        🔥 Oferta Especial
+                    </span>
+                </div>
+                <button 
+                    data-plan="annual"
+                    data-price="29900"
+                    data-title="Plano Anual VIP"
+                    onclick="openCheckout(this)"
+                    class="w-full h-12 px-4 bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-white rounded-lg font-medium transition-all hover:scale-[1.02] hover:shadow-lg"
+                >
+                    <div class="flex items-center justify-between">
+                        <div class="text-left">
+                            <div class="font-medium">Plano Anual VIP</div>
+                            <div class="text-xs opacity-90">Economize 17% • 12 meses</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-bold">R$ 299,00</div>
+                            <div class="text-xs opacity-75 line-through">R$ 358,80</div>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: SubscriptionPlans -->
+
+        <!-- @COMPONENT: ContentPreview -->
+        <div class="bg-card rounded-lg shadow-sm border border-border p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-foreground">Conteúdo</h3>
+                <div class="flex gap-2">
+                    <button class="tab-btn active px-3 py-1.5 text-sm bg-orange-50 text-orange-500 rounded-md">
+                        Fotos
+                    </button>
+                    <button class="tab-btn px-3 py-1.5 text-sm bg-muted text-muted-foreground rounded-md">
+                        Vídeos
+                    </button>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="aspect-square bg-gradient-to-br from-orange-100 to-pink-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-8 h-8 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="aspect-square bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-8 h-8 text-pink-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="text-center p-8 border-2 border-dashed border-muted rounded-lg">
+                <svg class="w-12 h-12 text-muted-foreground mx-auto mb-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                </svg>
+                <h4 class="font-medium text-foreground mb-1">Conteúdo Protegido</h4>
+                <p class="text-sm text-muted-foreground">Assine para acessar todo o conteúdo exclusivo</p>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: ContentPreview -->
+    </main>
+
+    <!-- @COMPONENT: CheckoutModal -->
+    <div id="checkoutModal" class="fixed inset-0 z-50 hidden">
+        <!-- Modal Backdrop -->
+        <div class="modal-backdrop fixed inset-0" onclick="closeCheckout()"></div>
+        
+        <!-- Modal Content -->
+        <div class="fixed inset-x-0 bottom-0 sm:inset-4 sm:max-w-lg sm:mx-auto sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
+            <div class="bg-card rounded-t-xl sm:rounded-xl shadow-2xl border border-border max-h-[90vh] overflow-y-auto slide-up" id="modalContent">
+                <!-- Modal Header -->
+                <div class="sticky top-0 bg-card border-b border-border px-6 py-4 flex items-center justify-between rounded-t-xl sm:rounded-t-xl">
+                    <h3 class="text-lg font-semibold text-foreground" id="modalTitle">Finalizar Pagamento</h3>
+                    <button onclick="closeCheckout()" class="p-2 hover:bg-muted rounded-lg transition-colors">
+                        <svg class="w-5 h-5 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Plan Summary -->
+                <div class="px-6 py-4 bg-muted/50 border-b border-border">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium text-foreground" id="planTitle">Plano Selecionado</h4>
+                            <p class="text-sm text-muted-foreground">Acesso completo por 30 dias</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xl font-bold text-foreground" id="planPrice">R$ 29,90</div>
+                            <div class="text-xs text-muted-foreground">Pagamento único</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Form -->
+                <div class="p-6">
+                    <!-- Step 1: User Information -->
+                    <div id="step1" class="checkout-step">
+                        <div class="mb-6">
+                            <h4 class="font-medium text-foreground mb-4">Suas Informações</h4>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-foreground mb-2">Nome Completo</label>
+                                    <input 
+                                        type="text" 
+                                        id="buyerName"
+                                        class="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        placeholder="Digite seu nome completo"
+                                        required
+                                    >
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-foreground mb-2">E-mail</label>
+                                    <input 
+                                        type="email" 
+                                        id="buyerEmail"
+                                        class="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        placeholder="Digite seu e-mail"
+                                        required
+                                    >
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-foreground mb-2">CPF</label>
+                                    <input 
+                                        type="text" 
+                                        id="buyerDocument"
+                                        class="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        placeholder="000.000.000-00"
+                                        maxlength="14"
+                                        required
+                                    >
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-foreground mb-2">Telefone</label>
+                                    <input 
+                                        type="tel" 
+                                        id="buyerPhone"
+                                        class="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        placeholder="(11) 99999-9999"
+                                        maxlength="15"
+                                        required
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <button 
+                            onclick="proceedToPayment()"
+                            class="w-full bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white py-3 rounded-lg font-medium transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                            id="continueBtn"
+                        >
+                            Continuar para Pagamento
+                        </button>
+                    </div>
+
+                    <!-- Step 2: Payment Method -->
+                    <div id="step2" class="checkout-step hidden">
+                        <div class="mb-6">
+                            <h4 class="font-medium text-foreground mb-4">Método de Pagamento</h4>
+                            
+                            <!-- PIX Option -->
+                            <div class="border border-border rounded-lg p-4 bg-gradient-to-r from-green-50 to-emerald-50">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-medium text-foreground">PIX</h5>
+                                        <p class="text-sm text-muted-foreground">Pagamento instantâneo e seguro</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-green-700 font-medium">✓ Aprovação imediata</span>
+                                    <span class="text-green-700 font-medium">✓ Sem taxas extras</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button 
+                            onclick="generatePixPayment()"
+                            class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-medium transition-all hover:shadow-lg flex items-center justify-center gap-2"
+                            id="generatePixBtn"
+                        >
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd"/>
+                                <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z"/>
+                            </svg>
+                            Gerar PIX
+                        </button>
+
+                        <button 
+                            onclick="backToStep1()"
+                            class="w-full mt-3 bg-muted hover:bg-muted/80 text-muted-foreground py-2 rounded-lg font-medium transition-all"
+                        >
+                            Voltar
+                        </button>
+                    </div>
+
+                    <!-- Step 3: PIX Payment -->
+                    <div id="step3" class="checkout-step hidden">
+                        <!-- Loading State -->
+                        <div id="loadingState" class="text-center py-8">
+                            <div class="loading-spinner mx-auto mb-4"></div>
+                            <h4 class="font-medium text-foreground mb-2">Gerando pagamento PIX...</h4>
+                            <p class="text-sm text-muted-foreground">Aguarde um momento</p>
+                        </div>
+
+                        <!-- PIX Payment Display -->
+                        <div id="pixPaymentDisplay" class="hidden">
+                            <div class="text-center mb-6">
+                                <h4 class="font-medium text-foreground mb-2">Escaneie o QR Code</h4>
+                                <p class="text-sm text-muted-foreground">Use o app do seu banco ou PIX para pagar</p>
+                            </div>
+
+                            <!-- QR Code Container -->
+                            <div class="qr-code-container p-6 rounded-xl border-2 border-dashed border-border mb-6">
+                                <div class="bg-white p-4 rounded-lg mx-auto max-w-64">
+                                    <img id="qrCodeImage" src="" alt="QR Code PIX" class="w-full h-auto rounded">
+                                </div>
+                            </div>
+
+                            <!-- PIX Copy Code -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-foreground mb-2">Ou copie o código PIX:</label>
+                                <div class="flex gap-2">
+                                    <input 
+                                        type="text" 
+                                        id="pixCode"
+                                        class="flex-1 px-3 py-2 border border-border rounded-lg bg-muted text-sm"
+                                        readonly
+                                    >
+                                    <button 
+                                        onclick="copyPixCode()"
+                                        class="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-all flex items-center gap-2"
+                                        id="copyBtn"
+                                    >
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/>
+                                            <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"/>
+                                        </svg>
+                                        <span>Copiar</span>
+                                    </button>
+                                </div>
+                                <div id="copyFeedback" class="copy-feedback mt-2 text-center">
+                                    <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">✓ Código copiado!</span>
+                                </div>
+                            </div>
+
+                            <!-- Payment Status -->
+                            <div id="paymentStatus" class="text-center p-4 border border-border rounded-lg">
+                                <div class="pulse-animation mb-2">
+                                    <div class="w-8 h-8 bg-orange-500 rounded-full mx-auto flex items-center justify-center">
+                                        <div class="w-3 h-3 bg-white rounded-full"></div>
+                                    </div>
+                                </div>
+                                <h4 class="font-medium text-foreground mb-1">Aguardando pagamento...</h4>
+                                <p class="text-sm text-muted-foreground">O status será atualizado automaticamente</p>
+                                <div class="text-xs text-muted-foreground mt-2">
+                                    Transação: <span id="transactionId" class="font-mono">-</span>
+                                </div>
+                            </div>
+
+                            <!-- Payment Timer -->
+                            <div class="text-center mt-4">
+                                <p class="text-xs text-muted-foreground">
+                                    ⏰ PIX expira em: <span id="paymentTimer" class="font-medium">15:00</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Success State -->
+                        <div id="successState" class="text-center py-8 hidden">
+                            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <h4 class="text-xl font-semibold text-foreground mb-2">Pagamento Aprovado!</h4>
+                            <p class="text-muted-foreground mb-6">Seu acesso foi liberado com sucesso</p>
+                            <button 
+                                onclick="closeCheckout()"
+                                class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-all"
+                            >
+                                Acessar Conteúdo
+                            </button>
+                        </div>
+
+                        <!-- Error State -->
+                        <div id="errorState" class="text-center py-8 hidden">
+                            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <h4 class="text-xl font-semibold text-foreground mb-2">Erro no Pagamento</h4>
+                            <p class="text-muted-foreground mb-6" id="errorMessage">Ocorreu um erro. Tente novamente.</p>
+                            <button 
+                                onclick="backToStep2()"
+                                class="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-lg font-medium transition-all"
+                            >
+                                Tentar Novamente
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bulls Pay Branding -->
+                <div class="px-6 py-3 border-t border-border bg-muted/30">
+                    <div class="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Pagamento seguro processado por</span>
+                        <span class="font-semibold text-orange-600">Bulls Pay</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: CheckoutModal -->
+
+    <!-- @COMPONENT: NotificationToast -->
+    <div id="notificationToast" class="fixed top-4 right-4 z-60 hidden">
+        <div class="bg-card border border-border rounded-lg shadow-lg p-4 min-w-80 fade-in">
+            <div class="flex items-start gap-3">
+                <div id="toastIcon" class="mt-0.5"></div>
+                <div class="flex-1">
+                    <h4 id="toastTitle" class="font-medium text-foreground text-sm"></h4>
+                    <p id="toastMessage" class="text-muted-foreground text-xs mt-1"></p>
+                </div>
+                <button onclick="hideNotification()" class="text-muted-foreground hover:text-foreground">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: NotificationToast -->
+
+    <script>
+        // ============================================================================
+        // CHECKOUT SYSTEM IMPLEMENTATION
+        // ============================================================================
+
+        // Global variables for checkout state
+        let currentCheckoutData = {};
+        let paymentTimer = null;
+        let paymentPolling = null;
+
+        // TODO: Replace with your actual Bulls Pay API credentials
+        const BULLS_PAY_CONFIG = {
+            // WARNING: In production, store these securely on your backend
+            publicKey: 'bp_client_YOUR_PUBLIC_KEY_HERE',
+            privateKey: 'bp_secret_YOUR_PRIVATE_KEY_HERE',
+            baseUrl: 'https://api-gateway.bullspay.com.br/api',
+            webhookUrl: 'https://your-domain.com/webhook/bullspay' // Configure your webhook endpoint
+        };
+
+        // ============================================================================
+        // MODAL MANAGEMENT
+        // ============================================================================
+
+        function openCheckout(button) {
+            const plan = button.dataset.plan;
+            const price = parseInt(button.dataset.price);
+            const title = button.dataset.title;
+
+            // Store checkout data
+            currentCheckoutData = {
+                plan: plan,
+                price: price,
+                title: title,
+                step: 1
+            };
+
+            // Update modal content
+            document.getElementById('modalTitle').textContent = 'Finalizar Pagamento';
+            document.getElementById('planTitle').textContent = title;
+            document.getElementById('planPrice').textContent = `R$ ${(price / 100).toFixed(2).replace('.', ',')}`;
+
+            // Show modal with animation
+            const modal = document.getElementById('checkoutModal');
+            const content = document.getElementById('modalContent');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.add('active');
+            }, 10);
+
+            // Reset to step 1
+            showStep(1);
+        }
+
+        function closeCheckout() {
+            const modal = document.getElementById('checkoutModal');
+            const content = document.getElementById('modalContent');
+            
+            content.classList.remove('active');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                resetCheckoutForm();
+            }, 300);
+
+            // Clear any running timers/polling
+            if (paymentTimer) clearInterval(paymentTimer);
+            if (paymentPolling) clearInterval(paymentPolling);
+        }
+
+        function resetCheckoutForm() {
+            // Reset form fields
+            document.getElementById('buyerName').value = '';
+            document.getElementById('buyerEmail').value = '';
+            document.getElementById('buyerDocument').value = '';
+            document.getElementById('buyerPhone').value = '';
+
+            // Reset steps
+            showStep(1);
+
+            // Reset states
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('pixPaymentDisplay').classList.add('hidden');
+            document.getElementById('successState').classList.add('hidden');
+            document.getElementById('errorState').classList.add('hidden');
+
+            // Clear current data
+            currentCheckoutData = {};
+        }
+
+        function showStep(stepNumber) {
+            // Hide all steps
+            const steps = document.querySelectorAll('.checkout-step');
+            steps.forEach(step => step.classList.add('hidden'));
+
+            // Show target step
+            document.getElementById(`step${stepNumber}`).classList.remove('hidden');
+            currentCheckoutData.step = stepNumber;
+        }
+
+        // ============================================================================
+        // FORM HANDLING AND VALIDATION
+        // ============================================================================
+
+        function proceedToPayment() {
+            // Validate form fields
+            const name = document.getElementById('buyerName').value.trim();
+            const email = document.getElementById('buyerEmail').value.trim();
+            const document = document.getElementById('buyerDocument').value.trim();
+            const phone = document.getElementById('buyerPhone').value.trim();
+
+            if (!name || !email || !document || !phone) {
+                showNotification('error', 'Campos obrigatórios', 'Preencha todos os campos para continuar');
+                return;
+            }
+
+            // Basic email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('error', 'E-mail inválido', 'Digite um e-mail válido');
+                return;
+            }
+
+            // Basic document validation (CPF format)
+            const cleanDocument = document.replace(/\D/g, '');
+            if (cleanDocument.length !== 11) {
+                showNotification('error', 'CPF inválido', 'Digite um CPF válido');
+                return;
+            }
+
+            // Store buyer information
+            currentCheckoutData.buyerInfo = {
+                name: name,
+                email: email,
+                document: cleanDocument,
+                phone: phone.replace(/\D/g, '')
+            };
+
+            // Proceed to step 2
+            showStep(2);
+        }
+
+        function backToStep1() {
+            showStep(1);
+        }
+
+        function backToStep2() {
+            showStep(2);
+            document.getElementById('errorState').classList.add('hidden');
+        }
+
+        // ============================================================================
+        // INPUT FORMATTING
+        // ============================================================================
+
+        // Format CPF input
+        document.getElementById('buyerDocument').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})/, '$1-$2');
+            value = value.replace(/(-\d{2})\d+?$/, '$1');
+            e.target.value = value;
+        });
+
+        // Format phone input
+        document.getElementById('buyerPhone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{2})(\d)/, '($1) $2');
+            value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+            e.target.value = value;
+        });
+
+        // ============================================================================
+        // BULLS PAY API INTEGRATION
+        // ============================================================================
+
+        async function generatePixPayment() {
+            try {
+                showStep(3);
+                
+                // Show loading state
+                document.getElementById('loadingState').classList.remove('hidden');
+                document.getElementById('pixPaymentDisplay').classList.add('hidden');
+
+                const transactionData = {
+                    amount: currentCheckoutData.price,
+                    buyer_infos: {
+                        buyer_name: currentCheckoutData.buyerInfo.name,
+                        buyer_email: currentCheckoutData.buyerInfo.email,
+                        buyer_document: currentCheckoutData.buyerInfo.document,
+                        buyer_phone: currentCheckoutData.buyerInfo.phone
+                    },
+                    external_id: `subscription_${Date.now()}`, // Unique order ID
+                    payment_method: "pix"
+                };
+
+                // TODO: In production, make this call through your backend to keep API keys secure
+                const response = await fetch(`${BULLS_PAY_CONFIG.baseUrl}/transactions/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-Public-Key': BULLS_PAY_CONFIG.publicKey,
+                        'X-Private-Key': BULLS_PAY_CONFIG.privateKey
+                    },
+                    body: JSON.stringify(transactionData)
+                });
+
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    // Store transaction info
+                    currentCheckoutData.transaction = result.data;
+
+                    // Hide loading, show payment display
+                    document.getElementById('loadingState').classList.add('hidden');
+                    document.getElementById('pixPaymentDisplay').classList.remove('hidden');
+
+                    // Update UI with payment data
+                    if (result.data.qr_code_base64) {
+                        document.getElementById('qrCodeImage').src = `data:image/png;base64,${result.data.qr_code_base64}`;
+                    }
+
+                    if (result.data.qr_code_text) {
+                        document.getElementById('pixCode').value = result.data.qr_code_text;
+                    }
+
+                    document.getElementById('transactionId').textContent = result.data.unic_id.substring(0, 8) + '...';
+
+                    // Start payment timer (15 minutes)
+                    startPaymentTimer(15 * 60);
+
+                    // Start polling for payment status
+                    startPaymentPolling(result.data.unic_id);
+
+                    showNotification('info', 'PIX Gerado', 'Escaneie o QR Code ou copie o código para pagar');
+
+                } else {
+                    throw new Error(result.message || 'Erro ao gerar pagamento PIX');
+                }
+
+            } catch (error) {
+                console.error('Error generating PIX payment:', error);
+                showErrorState('Erro ao gerar PIX. Tente novamente em alguns instantes.');
+            }
+        }
+
+        async function checkPaymentStatus(transactionId) {
+            try {
+                // TODO: In production, implement this through your backend webhook or status endpoint
+                const response = await fetch(`${BULLS_PAY_CONFIG.baseUrl}/transactions/list?id=${transactionId}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Public-Key': BULLS_PAY_CONFIG.publicKey,
+                        'X-Private-Key': BULLS_PAY_CONFIG.privateKey
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success && result.data.transactions.length > 0) {
+                    const transaction = result.data.transactions[0];
+                    return transaction.status;
+                }
+
+                return 'pending';
+
+            } catch (error) {
+                console.error('Error checking payment status:', error);
+                return 'error';
+            }
+        }
+
+        // ============================================================================
+        // PAYMENT FLOW MANAGEMENT
+        // ============================================================================
+
+        function startPaymentTimer(seconds) {
+            let timeLeft = seconds;
+            
+            paymentTimer = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                
+                document.getElementById('paymentTimer').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(paymentTimer);
+                    showErrorState('PIX expirado. Gere um novo pagamento.');
+                }
+
+                timeLeft--;
+            }, 1000);
+        }
+
+        function startPaymentPolling(transactionId) {
+            // Poll every 3 seconds for payment status
+            paymentPolling = setInterval(async () => {
+                const status = await checkPaymentStatus(transactionId);
+                
+                if (status === 'paid') {
+                    clearInterval(paymentPolling);
+                    clearInterval(paymentTimer);
+                    showSuccessState();
+                } else if (status === 'failed' || status === 'cancelled') {
+                    clearInterval(paymentPolling);
+                    clearInterval(paymentTimer);
+                    showErrorState('Pagamento não foi aprovado. Tente novamente.');
+                }
+            }, 3000);
+        }
+
+        function showSuccessState() {
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('pixPaymentDisplay').classList.add('hidden');
+            document.getElementById('successState').classList.remove('hidden');
+            document.getElementById('errorState').classList.add('hidden');
+
+            showNotification('success', 'Pagamento Aprovado!', 'Seu acesso foi liberado com sucesso');
+
+            // TODO: Update user access in your backend
+            // TODO: Redirect to content or update UI accordingly
+        }
+
+        function showErrorState(message) {
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('pixPaymentDisplay').classList.add('hidden');
+            document.getElementById('successState').classList.add('hidden');
+            document.getElementById('errorState').classList.remove('hidden');
+            document.getElementById('errorMessage').textContent = message;
+        }
+
+        // ============================================================================
+        // UTILITY FUNCTIONS
+        // ============================================================================
+
+        function copyPixCode() {
+            const pixCode = document.getElementById('pixCode');
+            pixCode.select();
+            pixCode.setSelectionRange(0, 99999); // For mobile devices
+
+            try {
+                document.execCommand('copy');
+                
+                // Show feedback
+                const feedback = document.getElementById('copyFeedback');
+                feedback.classList.add('show');
+                setTimeout(() => {
+                    feedback.classList.remove('show');
+                }, 2000);
+
+                showNotification('success', 'Código copiado!', 'Cole no seu app de pagamentos');
+            } catch (err) {
+                console.error('Error copying to clipboard:', err);
+                showNotification('error', 'Erro ao copiar', 'Tente copiar manualmente');
+            }
+
+            // Deselect text
+            window.getSelection().removeAllRanges();
+        }
+
+        function showNotification(type, title, message) {
+            const toast = document.getElementById('notificationToast');
+            const icon = document.getElementById('toastIcon');
+            const titleEl = document.getElementById('toastTitle');
+            const messageEl = document.getElementById('toastMessage');
+
+            // Set content
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+
+            // Set icon based on type
+            let iconHTML = '';
+            switch (type) {
+                case 'success':
+                    iconHTML = '<div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center"><svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></div>';
+                    break;
+                case 'error':
+                    iconHTML = '<div class="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center"><svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg></div>';
+                    break;
+                case 'info':
+                    iconHTML = '<div class="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center"><svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg></div>';
+                    break;
+                default:
+                    iconHTML = '<div class="w-5 h-5 bg-gray-500 rounded-full"></div>';
+            }
+
+            icon.innerHTML = iconHTML;
+
+            // Show notification
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.querySelector('.fade-in').classList.add('active');
+            }, 10);
+
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                hideNotification();
+            }, 5000);
+        }
+
+        function hideNotification() {
+            const toast = document.getElementById('notificationToast');
+            toast.querySelector('.fade-in').classList.remove('active');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 300);
+        }
+
+        // ============================================================================
+        // WEBHOOK HANDLING (Backend Implementation Needed)
+        // ============================================================================
+        
+        // TODO: Implement webhook endpoint on your backend to handle Bulls Pay notifications
+        // Example webhook handler structure:
+        /*
+        POST /webhook/bullspay
+        {
+            "event_type": "transaction",
+            "data": {
+                "unic_id": "uuid-da-transacao",
+                "external_id": "subscription_1234567890",
+                "status": "paid",
+                "total_value": 2990,
+                "total_to_receiver": 2841,
+                "created_at": "2024-01-15T10:30:00Z"
+            }
+        }
+        */
+
+        // ============================================================================
+        // INITIALIZATION
+        // ============================================================================
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is returning from a payment (implement based on your needs)
+            // Handle any URL parameters or session data
+
+            console.log('Checkout system initialized');
+            
+            // TODO: Check user authentication status
+            // TODO: Load user preferences
+            // TODO: Initialize any necessary tracking
+        });
+
+        // Handle browser back button when modal is open
+        window.addEventListener('popstate', function(event) {
+            const modal = document.getElementById('checkoutModal');
+            if (!modal.classList.contains('hidden')) {
+                closeCheckout();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('checkoutModal');
+                if (!modal.classList.contains('hidden')) {
+                    closeCheckout();
+                }
+            }
+        });
+    </script>
+
+    <!-- TODO: Add Google Analytics or other tracking scripts as needed -->
+    <!-- TODO: Add proper meta tags for SEO -->
+    <!-- TODO: Add social media meta tags -->
+    
+</body>
+</html>
