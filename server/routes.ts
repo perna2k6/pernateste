@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { sourcePayService } from "./services/sourcePayService";
+import { bullsPayService } from "./services/bullsPayService";
 import { webhookService } from "./services/webhookService";
 import { checkoutFormSchema, type BullsPayWebhookPayload } from "@shared/schema";
 import { randomUUID } from "crypto";
@@ -15,12 +15,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate unique external ID
       const externalId = `subscription_${Date.now()}_${randomUUID().slice(0, 8)}`;
 
-      // Create transaction with SourcePay
-      const sourcePayResponse = await sourcePayService.createTransaction(validatedData, externalId);
+      // Create transaction with BullsPay
+      const bullsPayResponse = await bullsPayService.createTransaction(validatedData, externalId);
 
       // Store transaction in our database
       const transaction = await storage.createTransaction({
-        unicId: sourcePayResponse.data.id,
+        unicId: bullsPayResponse.data.unic_id,
         externalId: externalId,
         userId: null, // Could be linked to user if authenticated
         amount: validatedData.price,
@@ -35,9 +35,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           phone: validatedData.phone,
         },
         paymentData: {
-          qrCodeBase64: sourcePayResponse.data.qrCodeImage || null,
-          qrCodeText: sourcePayResponse.data.qrCode || sourcePayResponse.data.pixCode || (sourcePayResponse.data.pix && sourcePayResponse.data.pix.qrcode) || null,
-          paymentUrl: null,
+          qrCodeBase64: bullsPayResponse.data.qr_code_base64 || null,
+          qrCodeText: bullsPayResponse.data.qr_code_text || null,
+          paymentUrl: bullsPayResponse.data.payment_url || null,
         },
       });
 
@@ -46,11 +46,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: true,
         data: {
           transactionId: transaction.id,
-          unicId: sourcePayResponse.data.id,
-          status: sourcePayResponse.data.status,
-          qrCodeBase64: sourcePayResponse.data.qrCodeImage || null,
-          qrCodeText: sourcePayResponse.data.qrCode || sourcePayResponse.data.pixCode || (sourcePayResponse.data.pix && sourcePayResponse.data.pix.qrcode) || null,
-          paymentUrl: null,
+          unicId: bullsPayResponse.data.unic_id,
+          status: bullsPayResponse.data.status,
+          qrCodeBase64: bullsPayResponse.data.qr_code_base64 || null,
+          qrCodeText: bullsPayResponse.data.qr_code_text || null,
+          paymentUrl: bullsPayResponse.data.payment_url || null,
         },
       });
     } catch (error) {
@@ -67,8 +67,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { unicId } = req.params;
       
-      // Check status with SourcePay
-      const status = await sourcePayService.checkTransactionStatus(unicId);
+      // Check status with BullsPay
+      const status = await bullsPayService.checkTransactionStatus(unicId);
       
       // Update our local transaction
       await storage.updateTransactionStatus(unicId, status);
@@ -135,8 +135,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { unicId } = req.params;
       
-      // Refund with SourcePay
-      const success = await sourcePayService.refundTransaction(unicId);
+      // Refund with BullsPay
+      const success = await bullsPayService.refundTransaction(unicId);
       
       if (success) {
         // Update local transaction status
