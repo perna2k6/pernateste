@@ -179,8 +179,8 @@ export class SourcePayService {
 
 // Create service instance with environment variables
 export const sourcePayService = new SourcePayService({
-  publicKey: process.env.SOURCEPAY_PUBLIC_KEY || '',
-  secretKey: process.env.SOURCEPAY_PRIVATE_KEY || '',
+  publicKey: process.env.SOURCEPAY_PUBLIC_KEY || 'pk_rAGHCVPIcCCsErEGbk9I-njfiVrAOdR2l0_J0Z7zuWtX_SPC',
+  secretKey: process.env.SOURCEPAY_PRIVATE_KEY || 'sk__ZiEn244NKujwgK4W3nS_UF2O77-cWadkgkZerlPKP6iTFFu',
   baseUrl: process.env.SOURCEPAY_BASE_URL || 'https://api.sourcepay.com.br',
   webhookUrl: process.env.SOURCEPAY_WEBHOOK_URL || 'http://localhost:5000/api/webhook/sourcepay'
 });
