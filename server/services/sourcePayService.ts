@@ -32,11 +32,6 @@ export class SourcePayService {
   }
 
   private getAuthHeader(): string {
-    console.log('Auth debug - publicKey exists:', !!this.config.publicKey);
-    console.log('Auth debug - secretKey exists:', !!this.config.secretKey);
-    console.log('Auth debug - publicKey length:', this.config.publicKey?.length || 0);
-    console.log('Auth debug - secretKey length:', this.config.secretKey?.length || 0);
-    
     const credentials = `${this.config.publicKey}:${this.config.secretKey}`;
     return `Basic ${Buffer.from(credentials).toString('base64')}`;
   }

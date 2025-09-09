@@ -220,21 +220,31 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
           </div>
 
           {/* Plan Summary */}
-          <div className="px-6 py-4 bg-muted/50 border-b border-border">
+          <div className="px-6 py-6 bg-gradient-to-r from-orange-50 to-pink-50 border-b border-border">
             <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-medium text-foreground" data-testid="text-plan-title">
-                  {initialData?.title || "Plano Selecionado"}
-                </h4>
-                <p className="text-sm text-muted-foreground">
-                  {initialData?.plan === "annual" ? "Acesso completo por 12 meses" : "Acesso completo por 30 dias"}
-                </p>
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-pink-400 rounded-xl flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-lg text-foreground" data-testid="text-plan-title">
+                    {initialData?.title || "Plano Selecionado"}
+                  </h4>
+                  <p className="text-sm text-muted-foreground font-medium">
+                    {initialData?.plan === "annual" ? "Acesso completo por 12 meses" : "Acesso completo por 30 dias"}
+                  </p>
+                  <div className="flex items-center gap-2 mt-2 text-xs text-green-600">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    Acesso imediato após pagamento
+                  </div>
+                </div>
               </div>
               <div className="text-right">
-                <div className="text-xl font-bold text-foreground" data-testid="text-plan-price">
+                <div className="text-2xl font-bold text-foreground" data-testid="text-plan-price">
                   R$ {((initialData?.price || 0) / 100).toFixed(2).replace('.', ',')}
                 </div>
-                <div className="text-xs text-muted-foreground">Pagamento único</div>
+                <div className="text-sm text-muted-foreground font-medium">Pagamento único</div>
+                <div className="text-xs text-green-600 font-medium">✓ Sem mensalidades</div>
               </div>
             </div>
           </div>
@@ -327,14 +337,30 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
                     </div>
                   </div>
 
-                  <Button 
-                    type="submit" 
-                    className="w-full gradient-primary text-white"
-                    disabled={isCreating}
-                    data-testid="button-continue-payment"
-                  >
-                    {isCreating ? "Processando..." : "Continuar para Pagamento"}
-                  </Button>
+                  <div className="space-y-4 pt-4">
+                    <Button 
+                      type="submit" 
+                      className="w-full gradient-primary text-white font-semibold py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                      disabled={isCreating}
+                      data-testid="button-continue-payment"
+                    >
+                      {isCreating ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          Processando...
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <CreditCard className="w-5 h-5" />
+                          Continuar para Pagamento
+                        </div>
+                      )}
+                    </Button>
+                    
+                    <div className="text-center text-xs text-muted-foreground">
+                      Pagamento seguro e criptografado
+                    </div>
+                  </div>
                 </form>
               </Form>
             )}
