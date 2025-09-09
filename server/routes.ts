@@ -16,9 +16,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const externalId = `subscription_${Date.now()}_${randomUUID().slice(0, 8)}`;
 
       // Create transaction with BullsPay
-      console.log("Creating transaction with data:", validatedData);
       const bullsPayResponse = await bullsPayService.createTransaction(validatedData, externalId);
-      console.log("BullsPay response:", JSON.stringify(bullsPayResponse, null, 2));
 
       // Store transaction in our database
       const transaction = await storage.createTransaction({
