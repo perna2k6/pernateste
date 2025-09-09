@@ -9,6 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import QRCode from 'qrcode';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
   const [currentStep, setCurrentStep] = useState<CheckoutStep>("form");
   const [paymentTimer, setPaymentTimer] = useState(900); // 15 minutes
   const [copyFeedback, setCopyFeedback] = useState(false);
+  const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string | null>(null);
   
   const { toast } = useToast();
   const {
@@ -104,12 +106,33 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
     return () => clearInterval(interval);
   }, [currentStep, currentTransaction, checkPaymentStatus, toast]);
 
+  // Generate QR Code when transaction is created
+  useEffect(() => {
+    const generateQRCode = async () => {
+      if (currentTransaction?.paymentData?.qrCodeText) {
+        try {
+          const dataUrl = await QRCode.toDataURL(currentTransaction.paymentData.qrCodeText, {
+            width: 256,
+            margin: 2,
+            color: {
+              dark: '#000000',
+              light: '#FFFFFF'
+            }
+          });
+          setQrCodeDataUrl(dataUrl);
+        } catch (error) {
+          console.error('Error generating QR code:', error);
+        }
+      }
+    };
+    
+    generateQRCode();
+  }, [currentTransaction?.paymentData?.qrCodeText]);
+
   const onSubmit = async (data: CheckoutForm) => {
     try {
       setCurrentStep("payment");
       const transaction = await createTransaction(data);
-      
-      console.log('Transaction created:', transaction);
       
       if (transaction) {
         setCurrentStep("pix");
@@ -119,7 +142,6 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
         });
       }
     } catch (error) {
-      console.error('Checkout error:', error);
       setCurrentStep("error");
       toast({
         title: "Erro",
@@ -447,7 +469,7 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
                 </div>
 
                 {/* QR Code Image */}
-                {currentTransaction.paymentData?.qrCodeBase64 ? (
+                {qrCodeDataUrl ? (
                   <div className="mb-8">
                     <div className="bg-white rounded-2xl p-6 border-2 border-gray-200 shadow-lg">
                       <div className="text-center mb-4">
@@ -458,39 +480,37 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
                       <div className="flex justify-center">
                         <div className="bg-white p-4 rounded-2xl border-2 border-gray-100 shadow-inner">
                           <img 
-                            src={`data:image/png;base64,${currentTransaction.paymentData.qrCodeBase64}`}
+                            src={qrCodeDataUrl}
                             alt="QR Code PIX"
-                            className="w-48 h-48 mx-auto"
+                            className="w-64 h-64 mx-auto"
                             data-testid="qr-code-image"
-                            onError={(e) => {
-                              console.log('QR Code image failed to load');
-                              e.currentTarget.style.display = 'none';
-                            }}
                           />
                         </div>
                       </div>
                       
                       <div className="text-center mt-4">
-                        <p className="text-xs text-muted-foreground">Abra o app do seu banco e escaneie este código</p>
+                        <div className="bg-green-50 rounded-lg p-3">
+                          <p className="text-sm text-green-700 font-medium">📱 Abra o app do seu banco e escaneie este código</p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                ) : (
+                ) : currentTransaction?.paymentData?.qrCodeText ? (
                   <div className="mb-8">
-                    <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-2xl p-6 border-2 border-yellow-200">
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-200">
                       <div className="text-center">
-                        <div className="w-16 h-16 bg-yellow-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                          <CreditCard className="w-8 h-8 text-yellow-800" />
+                        <div className="w-16 h-16 bg-blue-400 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse">
+                          <CreditCard className="w-8 h-8 text-white" />
                         </div>
-                        <h5 className="font-semibold text-lg text-foreground mb-2">QR Code sendo gerado</h5>
-                        <p className="text-sm text-muted-foreground mb-4">O QR Code estará disponível em breve</p>
-                        <div className="text-xs text-yellow-700 bg-yellow-100 rounded-lg p-2">
-                          Use o código PIX abaixo enquanto o QR Code não aparece
+                        <h5 className="font-semibold text-lg text-foreground mb-2">Gerando QR Code...</h5>
+                        <p className="text-sm text-muted-foreground mb-4">Aguarde um momento</p>
+                        <div className="text-xs text-blue-700 bg-blue-100 rounded-lg p-2">
+                          Use o código PIX abaixo enquanto geramos o QR Code
                         </div>
                       </div>
                     </div>
                   </div>
-                )}
+                ) : null}
 
                 {/* PIX Copy Code */}
                 {currentTransaction.paymentData?.qrCodeText && (
