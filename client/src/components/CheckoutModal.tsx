@@ -61,6 +61,7 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
     if (isOpen) {
       setCurrentStep("form");
       setPaymentTimer(900);
+      setQrCodeDataUrl(null);
       clearError();
     }
   }, [isOpen, clearError]);
@@ -147,13 +148,19 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
       const transaction = await createTransaction(data);
       
       if (transaction) {
-        setCurrentStep("pix");
-        toast({
-          title: "PIX Gerado",
-          description: "Escaneie o QR Code ou copie o código para pagar",
-        });
+        // Wait a bit for transaction data to be fully set
+        setTimeout(() => {
+          setCurrentStep("pix");
+          toast({
+            title: "PIX Gerado",
+            description: "Escaneie o QR Code ou copie o código para pagar",
+          });
+        }, 100);
+      } else {
+        setCurrentStep("error");
       }
     } catch (error) {
+      console.error('Checkout error:', error);
       setCurrentStep("error");
       toast({
         title: "Erro",
@@ -231,12 +238,23 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
       {/* Backdrop */}
       <div 
         className="modal-backdrop fixed inset-0" 
-        onClick={handleClose}
+        onClick={(e) => {
+          // Only close if clicking directly on backdrop, not on modal content
+          if (e.target === e.currentTarget) {
+            handleClose();
+          }
+        }}
         data-testid="modal-backdrop"
       />
       
       {/* Modal Content */}
-      <div className="fixed inset-x-0 bottom-0 sm:inset-4 sm:max-w-lg sm:mx-auto sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
+      <div 
+        className="fixed inset-x-0 bottom-0 sm:inset-4 sm:max-w-lg sm:mx-auto sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2"
+        onClick={(e) => {
+          // Prevent modal from closing when clicking inside content
+          e.stopPropagation();
+        }}
+      >
         <Card className="rounded-t-xl sm:rounded-xl shadow-2xl max-h-[90vh] flex flex-col slide-up active">
           {/* Header */}
           <div className="sticky top-0 bg-gradient-to-r from-white to-gray-50 border-b border-border px-6 py-5 flex items-center justify-between rounded-t-xl sm:rounded-t-xl shadow-sm">
@@ -481,15 +499,6 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
                   <p className="text-muted-foreground">Escaneie o QR Code ou copie o código PIX para pagar</p>
                 </div>
 
-                {/* Debug Info */}
-                {process.env.NODE_ENV === 'development' && (
-                  <div className="mb-4 p-2 bg-gray-100 rounded text-xs text-gray-600">
-                    <div>Step: {currentStep}</div>
-                    <div>Transaction exists: {currentTransaction ? 'Yes' : 'No'}</div>
-                    <div>PIX Code exists: {currentTransaction?.paymentData?.qrCodeText ? 'Yes' : 'No'}</div>
-                    <div>QR DataURL exists: {qrCodeDataUrl ? 'Yes' : 'No'}</div>
-                  </div>
-                )}
 
                 {/* QR Code Section */}
                 <div className="mb-8">
