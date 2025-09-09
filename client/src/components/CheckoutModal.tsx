@@ -443,13 +443,40 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
                   <p className="text-muted-foreground">Escaneie o QR Code ou copie o código PIX para pagar</p>
                 </div>
 
+                {/* QR Code Image */}
+                {currentTransaction.paymentData?.qrCodeBase64 && (
+                  <div className="mb-8">
+                    <div className="bg-white rounded-2xl p-6 border-2 border-gray-200 shadow-lg">
+                      <div className="text-center mb-4">
+                        <h5 className="font-semibold text-lg text-foreground mb-1">QR Code PIX</h5>
+                        <p className="text-sm text-muted-foreground">Escaneie com o app do seu banco</p>
+                      </div>
+                      
+                      <div className="flex justify-center">
+                        <div className="bg-white p-4 rounded-2xl border-2 border-gray-100 shadow-inner">
+                          <img 
+                            src={`data:image/png;base64,${currentTransaction.paymentData.qrCodeBase64}`}
+                            alt="QR Code PIX"
+                            className="w-48 h-48 mx-auto"
+                            data-testid="qr-code-image"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="text-center mt-4">
+                        <p className="text-xs text-muted-foreground">Abra o app do seu banco e escaneie este código</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* PIX Copy Code */}
                 {currentTransaction.paymentData?.qrCodeText && (
                   <div className="mb-8">
                     <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-200">
                       <div className="text-center mb-4">
                         <h5 className="font-semibold text-lg text-foreground mb-1">Código PIX</h5>
-                        <p className="text-sm text-muted-foreground">Copie e cole no seu app de pagamentos</p>
+                        <p className="text-sm text-muted-foreground">Ou copie e cole no seu app de pagamentos</p>
                       </div>
                       
                       <div className="space-y-4">
