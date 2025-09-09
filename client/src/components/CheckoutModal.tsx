@@ -199,7 +199,7 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
       
       {/* Modal Content */}
       <div className="fixed inset-x-0 bottom-0 sm:inset-4 sm:max-w-lg sm:mx-auto sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
-        <Card className="rounded-t-xl sm:rounded-xl shadow-2xl max-h-[90vh] overflow-y-auto slide-up active">
+        <Card className="rounded-t-xl sm:rounded-xl shadow-2xl max-h-[90vh] flex flex-col slide-up active">
           {/* Header */}
           <div className="sticky top-0 bg-card border-b border-border px-6 py-4 flex items-center justify-between rounded-t-xl sm:rounded-t-xl">
             <h3 className="text-lg font-semibold text-foreground">
@@ -239,7 +239,7 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
             </div>
           </div>
 
-          <CardContent className="p-6">
+          <CardContent className="p-6 overflow-y-auto flex-1">
             {/* Step 1: User Information Form */}
             {currentStep === "form" && (
               <Form {...form}>
