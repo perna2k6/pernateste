@@ -119,13 +119,14 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
       if (pixCode) {
         try {
           const dataUrl = await QRCode.toDataURL(pixCode, {
-            width: 300,
-            margin: 2,
+            width: 256,
+            margin: 1,
             color: {
               dark: '#000000',
-              light: '#FFFFFF'
+              light: '#FFFFFF'  
             },
-            errorCorrectionLevel: 'M'
+            errorCorrectionLevel: 'M',
+            type: 'image/png'
           });
           console.log('QR Code generated successfully');
           setQrCodeDataUrl(dataUrl);
@@ -497,7 +498,7 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
 
             {/* Step 3: PIX Payment Display */}
             {currentStep === "pix" && currentTransaction && (
-              <div className="py-4">
+              <div className="py-4" onClick={(e) => e.stopPropagation()}>
                 <div className="text-center mb-8">
                   <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                     <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center">
@@ -523,10 +524,20 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
                           <img 
                             src={qrCodeDataUrl}
                             alt="QR Code PIX"
-                            className="w-64 h-64 mx-auto"
+                            className="w-64 h-64 mx-auto block"
                             data-testid="qr-code-image"
                             onLoad={() => console.log('QR Code image loaded')}
-                            onError={() => console.log('QR Code image failed to load')}
+                            onError={(e) => {
+                              console.log('QR Code image failed to load');
+                              console.error('Image error:', e);
+                            }}
+                            style={{ 
+                              display: 'block',
+                              maxWidth: '256px',
+                              maxHeight: '256px',
+                              width: 'auto',
+                              height: 'auto'
+                            }}
                           />
                         </div>
                       ) : currentTransaction?.paymentData?.qrCodeText ? (
@@ -558,7 +569,7 @@ export default function CheckoutModal({ isOpen, onClose, initialData }: Checkout
 
                 {/* PIX Copy Code */}
                 {currentTransaction.paymentData?.qrCodeText && (
-                  <div className="mb-8">
+                  <div className="mb-8" onClick={(e) => e.stopPropagation()}>
                     <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-200">
                       <div className="text-center mb-4">
                         <h5 className="font-semibold text-lg text-foreground mb-1">Código PIX</h5>
